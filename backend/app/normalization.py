@@ -59,6 +59,12 @@ def normalize_value(field: str, raw_value: str) -> tuple[NormalizedValue | None,
         return NormalizedValue(value=raw, display=raw), "Unrecognized material retained for review."
 
     if field == "size":
+        scalar_size_pattern = r"(?:\d+(?:\.\d+)?|\d+\s*/\s*\d+)\s*(?:mm|millimet(?:er|re)s?|in(?:ch(?:es)?)?|\")"
+        if re.search(r"(?:\bto\b|[-–])", raw, re.I) and len(re.findall(scalar_size_pattern, raw, re.I)) >= 2:
+            return (
+                NormalizedValue(value=raw, display=raw),
+                "The source gives a product-family size range; select an individual SKU before assigning a scalar PIM size.",
+            )
         dn_match = re.search(r"\bDN\s*(?P<number>\d{1,4})\b", raw, re.I)
         if dn_match:
             dn_size = int(dn_match.group("number"))
@@ -98,19 +104,27 @@ def normalize_value(field: str, raw_value: str) -> tuple[NormalizedValue | None,
         if class_match:
             number = float(class_match.group("number"))
             return NormalizedValue(value=number, unit="ASME Class", display=f"ASME Class {_display_number(number)}"), "Retained the source pressure-class designation."
-        match = re.search(r"(?P<number>\d+(?:\.\d+)?)\s*(?P<unit>w\.?o\.?g\.?|psi|bar)\b", raw, re.I)
+        wog_or_wsp = re.search(r"(?P<number>\d+(?:\.\d+)?)\s*(?:psi\s*)?(?P<unit>w\.?o\.?g\.?|w\.?s\.?p\.?)\b", raw, re.I)
+        if wog_or_wsp:
+            number = float(wog_or_wsp.group("number"))
+            unit = wog_or_wsp.group("unit").lower().replace(".", "")
+            canonical_unit = {"wog": "WOG", "wsp": "WSP"}[unit]
+            return NormalizedValue(value=number, unit=canonical_unit, display=f"{_display_number(number)} {canonical_unit}"), (
+                None if raw == f"{_display_number(number)} {canonical_unit}" else f"Standardized pressure notation to {canonical_unit}."
+            )
+        match = re.search(r"(?P<number>\d+(?:\.\d+)?)\s*(?P<unit>psi|bar)\b", raw, re.I)
         if not match:
             return None, "Could not parse a numeric pressure rating and supported unit."
         number = float(match.group("number"))
         unit = match.group("unit").lower().replace(".", "")
-        canonical_unit = {"wog": "WOG", "psi": "psi", "bar": "bar"}[unit]
+        canonical_unit = {"psi": "psi", "bar": "bar"}[unit]
         return NormalizedValue(value=number, unit=canonical_unit, display=f"{_display_number(number)} {canonical_unit}"), (
             None if raw == f"{_display_number(number)} {canonical_unit}" else f"Standardized pressure notation to {canonical_unit}."
         )
 
     if field == "temperature_range":
         match = re.search(
-            r"(?P<low>-?\d+(?:\.\d+)?)\s*°?\s*(?P<low_unit>[CF])\s*(?:to|[-–])\s*(?P<high>-?\d+(?:\.\d+)?)\s*°?\s*(?P<high_unit>[CF])",
+            r"(?P<low>[+-]?\d+(?:\.\d+)?)\s*°?\s*(?P<low_unit>[CF])\s*(?:to|[-–])\s*(?P<high>[+-]?\d+(?:\.\d+)?)\s*°?\s*(?P<high_unit>[CF])",
             raw,
             re.I,
         )

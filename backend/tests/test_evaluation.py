@@ -34,6 +34,7 @@ def test_evaluation_harness_reports_field_level_measures_without_copying_source(
     assert summary["selected_record_coverage"] == 1.0
     assert summary["verified_exact_match_precision"] == 1.0
     assert summary["verified_exact_match_recall"] == 1.0
+    assert summary["inferred_candidate_exact_match_rate"] is None
     assert summary["false_verified_count"] == 0
     assert summary["missing_routing_accuracy"] == 1.0
     assert (output / "summary.json").exists()

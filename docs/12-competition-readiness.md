@@ -42,6 +42,7 @@ An external CSV records `case_id`, local `source_path`, `record_index`, `field`,
 - document acceptance rate;
 - selected-record coverage for multi-SKU documents;
 - field-level exact-match precision and recall for direct (`Verified`) source facts;
+- exact-match agreement for expected `Inferred` review candidates, reported separately from `Verified` facts;
 - false-`Verified` count and rate;
 - correct `Missing`/`Conflict` routing; and
 - an auditable per-field result CSV.

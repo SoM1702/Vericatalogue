@@ -22,8 +22,8 @@ venv/bin/python -m evaluation.run_evaluation /absolute/path/to/ground_truth.csv 
 
 The output directory contains:
 
-- `summary.json` — document acceptance, selected-record coverage, exact-match precision/recall for `Verified` fields, false-`Verified` count/rate, and missing/conflict routing;
+- `summary.json` — document acceptance, selected-record coverage, exact-match precision/recall for `Verified` fields, inferred-candidate exact-match rate, false-`Verified` count/rate, and missing/conflict routing;
 - `field_results.csv` — one auditable comparison per expected field; and
 - `report.md` — a compact human-readable summary.
 
-Do not call any resulting number “overall accuracy.” Report the source set, its licence/permission, inclusion rules, document types, annotator process, and the individual measures together.
+An inferred-candidate exact match means a review-required candidate agrees with a locked label; it is not a `Verified` extraction rate. Do not call any resulting number “overall accuracy.” Report the source set, its licence/permission, inclusion rules, document types, annotator process, and the individual measures together.

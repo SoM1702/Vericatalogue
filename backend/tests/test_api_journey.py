@@ -77,6 +77,21 @@ def _multipart(fields: dict[str, str], filename: str, payload: bytes, content_ty
     return bytes(body), f"multipart/form-data; boundary={boundary}"
 
 
+def test_api_ai_status_exposes_mode_without_provider_secret(monkeypatch) -> None:
+    monkeypatch.setattr(
+        main,
+        "ai_status",
+        lambda: {"enabled": False, "configured": False, "model": None, "mode": "deterministic_only", "message": "AI is off."},
+    )
+    status, response_body = _request("GET", "/api/ai/status")
+    assert status == 200
+    body = json.loads(response_body)
+    assert body["configured"] is False
+    assert body["model"] is None
+    assert body["mode"] == "deterministic_only"
+    assert "key" not in " ".join(str(value) for value in body.values()).lower()
+
+
 def test_api_enrichment_selects_one_multi_sku_record_and_exports_it(tmp_path: Path, monkeypatch) -> None:
     _configure_service(tmp_path, monkeypatch)
     payload = _pdf(

@@ -79,6 +79,27 @@ VERICATALOG_AI_MODEL=your-model-id
 
 Restart the backend. The UI then displays **AI candidate mapper**. The mapper can only add a value when its raw value and quoted snippet both occur in the uploaded source; its fields are always labelled **Inferred** and require review. A key never enters frontend code, browser storage, exports, logs, or version control. Keep `VERICATALOG_AI_BATCH_LIMIT=10` unless you intentionally want more provider calls for a batch.
 
+Before a demo with a real provider, call `GET /api/ai/status`. It must report `configured: true` and the intended model; otherwise stay in deterministic proof mode. See [docs/14-ai-provider-preflight.md](docs/14-ai-provider-preflight.md) for the no-secret smoke check and failure cases.
+
+## One-command judge setup
+
+With Docker Desktop running, the complete local app is available without separately starting Python or Vite:
+
+```bash
+cd /Users/nan/Documents/codes/unihack
+docker compose up --build
+```
+
+Open <http://localhost:5173>. The browser communicates with the FastAPI service through the same-origin `/api` proxy, and SQLite/uploads stay in the named local Docker volume. Stop the containers with `docker compose down` when finished; this preserves the local volume.
+
+The container setup starts in deterministic proof mode. To opt into the owner's ignored server-side model configuration, first create `backend/.env` from `backend/.env.example`, then run:
+
+```bash
+docker compose --env-file backend/.env up --build
+```
+
+No key is baked into an image or sent to the browser.
+
 ## Bounded Evidence Review Agent
 
 After opening a record in **Evidence & Review Workbench**, choose **Run review agent**. It runs four named, local inspection tools in a fixed bounded sequence: identify exception fields, inspect retained provenance, evaluate validation output, and rank human actions. The resulting plan and tool trace are stored in SQLite so the reviewer can see why each task was prioritised.
@@ -128,7 +149,7 @@ venv/bin/python -m evaluation.run_evaluation /absolute/path/to/ground_truth.csv 
   --output /absolute/path/to/vericatalog-evaluation-output
 ```
 
-See [backend/evaluation/README.md](backend/evaluation/README.md) for the required labels and responsible reporting boundary. Do not call any result “overall accuracy”; report the exact source set, inclusion rules, annotators, and field-level measures together.
+See [backend/evaluation/README.md](backend/evaluation/README.md) for the required labels and responsible reporting boundary. Do not call any result “overall accuracy”; report the exact source set, inclusion rules, annotators, and field-level measures together. A deliberately limited public-datasheet smoke run and its reporting limits are recorded in [docs/13-public-document-smoke-evaluation.md](docs/13-public-document-smoke-evaluation.md).
 
 ## Repository layout
 

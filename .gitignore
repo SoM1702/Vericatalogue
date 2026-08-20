@@ -13,9 +13,11 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env.local
 videos/*/node_modules/
+videos/*/.thumbnails/
 videos/*/.hyperframes/frame-packets/
 videos/*/output/
 videos/*/*.mp4
+videos/*/renders/
 
 # Local evaluation inputs/results. Authorised sources must never be committed.
 authorised_sources/

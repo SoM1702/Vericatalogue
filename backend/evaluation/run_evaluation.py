@@ -142,9 +142,13 @@ def evaluate(ground_truth_path: Path, output_directory: Path) -> dict:
                 )
 
     direct_expected = [row for row in results if row["expected_status"] == "verified"]
+    inferred_expected = [row for row in results if row["expected_status"] == "inferred"]
     predicted_verified = [row for row in results if row["predicted_status"] == "verified"]
     correct_verified = [
         row for row in results if row["expected_status"] == "verified" and row["predicted_status"] == "verified" and row["exact_match"]
+    ]
+    correct_inferred = [
+        row for row in results if row["expected_status"] == "inferred" and row["predicted_status"] == "inferred" and row["exact_match"]
     ]
     false_verified = [row for row in predicted_verified if row not in correct_verified]
     missing_expected = [row for row in results if row["expected_status"] == "missing"]
@@ -161,6 +165,7 @@ def evaluate(ground_truth_path: Path, output_directory: Path) -> dict:
         "ground_truth_field_rows": len(results),
         "verified_exact_match_precision": round(len(correct_verified) / len(predicted_verified), 4) if predicted_verified else None,
         "verified_exact_match_recall": round(len(correct_verified) / len(direct_expected), 4) if direct_expected else None,
+        "inferred_candidate_exact_match_rate": round(len(correct_inferred) / len(inferred_expected), 4) if inferred_expected else None,
         "false_verified_count": len(false_verified),
         "false_verified_rate": round(len(false_verified) / len(predicted_verified), 4) if predicted_verified else 0.0,
         "missing_routing_accuracy": round(
@@ -200,6 +205,7 @@ def _report_markdown(summary: dict) -> str:
         "selected_record_coverage": "Selected record coverage",
         "verified_exact_match_precision": "Verified exact-match precision",
         "verified_exact_match_recall": "Verified exact-match recall",
+        "inferred_candidate_exact_match_rate": "Inferred candidate exact-match rate",
         "false_verified_count": "False-Verified count",
         "false_verified_rate": "False-Verified rate",
         "missing_routing_accuracy": "Missing routing accuracy",

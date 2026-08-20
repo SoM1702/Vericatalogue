@@ -25,6 +25,6 @@
 - `duplicate_candidate_count` counts normalized identifier keys occurring more than once: part number first, otherwise manufacturer + title + size.
 - These metrics are properties of the processed batch, not accuracy, time-saving, ROI, or supplier-quality claims.
 
-The synthetic demo set is designed to exercise rules and cannot estimate real-world accuracy. The repository now includes the local evaluator in `backend/evaluation/`; it requires an authorized labelled source set, published inclusion criteria, field-level precision/recall method, and known limitations. It emits document acceptance, selected-record coverage, verified exact-match precision/recall, false-Verified rate, and missing/conflict routing measures from the locked ground truth. It must not be reported as an overall accuracy claim.
+The synthetic demo set is designed to exercise rules and cannot estimate real-world accuracy. The repository now includes the local evaluator in `backend/evaluation/`; it requires an authorized labelled source set, published inclusion criteria, field-level precision/recall method, and known limitations. It emits document acceptance, selected-record coverage, verified exact-match precision/recall, inferred-candidate exact-match rate, false-Verified rate, and missing/conflict routing measures from the locked ground truth. It must not be reported as an overall accuracy claim.
 
 The Review Agent is evaluated for safe triage behaviour and traceability, not for accuracy. It consumes already-extracted data and does not generate or change an attribute.

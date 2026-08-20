@@ -18,6 +18,7 @@
 
 - [x] Backend automated tests cover normalization, required fields, conflict detection, evidence persistence, exports, PDF text/table-layout/OCR/multi-SKU input, API journeys, batch input, optional-AI grounding/inference safeguards, evaluation-output safeguards, and Review Agent prioritisation/persistence/non-mutation safeguards.
 - [x] A local authorised-data evaluation harness produces auditable field-level results without copying external sources into the project.
+- [x] A one-document, eight-field public-datasheet smoke run is documented with all values remaining `Inferred`; it is explicitly not an independently labelled accuracy benchmark.
 - [ ] Run the evaluator on an authorised, independently labelled real-world source set and report its source scope with the field-level measures. No general accuracy number is currently claimed.
 - [x] Frontend TypeScript production build and lint pass.
 - [x] Live local QA completed for PDF enrichment, conflict review, review persistence, and catalog-health batch flow.
@@ -30,9 +31,10 @@
 - [x] Seven-slide pitch-deck content is in `docs/09-pitch-deck-outline.md`.
 - [x] Rendered, editable seven-slide deck is in `submission/VeriCatalog-Proof-UniHack-2026.pptx` and passed slide overflow checks.
 - [x] Validated 90-second silent demo-video source and scene snapshots are in `videos/vericatalog-proof-demo/`; runtime, layout, motion, and 47/47 text contrast checks pass.
+- [x] A 90-second 1080p MP4 is rendered in `submission/VeriCatalog-Proof-UniHack-2026-demo.mp4` and verified for duration.
 - [x] Ready-to-paste solution description is in `docs/SUBMISSION_DESCRIPTION.md`.
 - [x] Data provenance is recorded in `docs/DATA_SOURCES.md`; all shipped demo data is synthetic.
 - [x] Synthetic single-SKU, conflict, batch, and multi-SKU demo files are generated locally and explicitly labelled as non-real data.
 - [ ] Add the repository URL after the owner publishes the source repository.
-- [ ] If the event accepts a product video, owner approves the final render, reviews the MP4, and uploads it.
+- [ ] If the event accepts a product video, owner/team reviews the rendered MP4 once and uploads it.
 - [ ] Owner submits through the official event workflow. This project does not register, publish, or submit externally.

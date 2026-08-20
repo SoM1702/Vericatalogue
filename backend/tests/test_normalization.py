@@ -26,6 +26,21 @@ def test_normalizes_pressure_and_temperature() -> None:
     assert temperature_note is not None
 
 
+def test_normalizes_psi_wog_and_positive_temperature_bounds() -> None:
+    pressure, pressure_note = normalize_value("pressure_rating", "600 psi WOG")
+    temperature, temperature_note = normalize_value("temperature_range", "-50 F to +400 F")
+    assert pressure is not None and pressure.display == "600 WOG"
+    assert pressure_note is not None
+    assert temperature is not None and temperature.value == [-45.556, 204.444]
+    assert temperature_note is not None
+
+
+def test_preserves_product_family_size_ranges_for_review() -> None:
+    size, explanation = normalize_value("size", '1/4" to 2"')
+    assert size is not None and size.display == '1/4" to 2"'
+    assert explanation and "product-family size range" in explanation
+
+
 def test_normalizes_dn_size_and_nominal_pressure() -> None:
     size, size_note = normalize_value("size", "DN 25")
     pressure, pressure_note = normalize_value("pressure_rating", "PN 16")

@@ -38,7 +38,7 @@ FIELD_ALIASES = {
     "product_type": ["product type", "valve type", "type"],
     "material": ["material", "body material", "material of construction"],
     "size": ["size", "nominal size", "nominal diameter", "diameter", "pipe size", "port size"],
-    "end_connection": ["end connection", "connection", "connection type", "end type"],
+    "end_connection": ["end connection", "end connections", "connection", "connection type", "end type"],
     "pressure_rating": ["pressure rating", "nominal pressure", "working pressure", "pressure class", "pressure", "rating"],
     "temperature_range": ["temperature range", "temperature", "temp range", "operating temperature"],
     "certifications": ["certifications", "certification", "standards"],
@@ -48,22 +48,22 @@ FIELD_ALIASES = {
 OCR_PAGE_LIMIT = 8
 OCR_TEXT_THRESHOLD = 24
 
-PRODUCT_HEADING_PATTERN = re.compile(r"\b(?:ball|gate|globe|check|butterfly|plug)\s+valve\b|\bfitting\b", re.I)
-PRODUCT_TYPE_PATTERN = re.compile(r"\b(?P<type>ball|gate|globe|check|butterfly|plug)\s+valve\b|\b(?P<fitting>fitting)\b", re.I)
+PRODUCT_HEADING_PATTERN = re.compile(r"\b(?:ball|gate|globe|check|butterfly|plug)\s+valves?\b|\bfittings?\b", re.I)
+PRODUCT_TYPE_PATTERN = re.compile(r"\b(?P<type>ball|gate|globe|check|butterfly|plug)\s+valves?\b|\b(?P<fitting>fittings?)\b", re.I)
 MATERIAL_PATTERN = re.compile(
     r"\b(?:stainless\s+steel\s*(?:30[46]|316l)?|(?:30[46]|316l?)\s*(?:stainless\s+steel|ss)|carbon\s+steel|brass|bronze|cast\s+iron|pvc)\b",
     re.I,
 )
 SIZE_PATTERN = re.compile(
-    r"\b(?:DN\s*\d{1,4}\b|(?:\d+(?:\.\d+)?|\d+\s*/\s*\d+)\s*(?:mm|millimet(?:er|re)s?|in(?:ch(?:es)?)?|\"))",
+    r"\b(?:DN\s*\d{1,4}\b|(?:\d+(?:\.\d+)?|\d+\s*/\s*\d+)\s*(?:mm|millimet(?:er|re)s?|in(?:ch(?:es)?)?|\")\s*(?:to|[-–])\s*(?:\d+(?:\.\d+)?|\d+\s*/\s*\d+)\s*(?:mm|millimet(?:er|re)s?|in(?:ch(?:es)?)?|\")|(?:\d+(?:\.\d+)?|\d+\s*/\s*\d+)\s*(?:mm|millimet(?:er|re)s?|in(?:ch(?:es)?)?|\"))",
     re.I,
 )
 CONNECTION_PATTERN = re.compile(r"\b(?:npt|bsp(?:t|p)?|flanged|tri[ -]?clamp|socket\s+weld|butt\s+weld|threaded|screwed)\b", re.I)
-PRESSURE_PATTERN = re.compile(r"\b(?:PN\s*\d+|(?:ASME\s+)?Class\s*\d+|\d+(?:\.\d+)?\s*(?:w\.?o\.?g\.?|psi|bar))\b", re.I)
-TEMPERATURE_PATTERN = re.compile(r"-?\d+(?:\.\d+)?\s*°?\s*[CF]\s*(?:to|[-–])\s*-?\d+(?:\.\d+)?\s*°?\s*[CF]", re.I)
+PRESSURE_PATTERN = re.compile(r"\b(?:PN\s*\d+|(?:ASME\s+)?Class\s*\d+|\d+(?:\.\d+)?\s*(?:(?:psi\s*)?(?:w\.?o\.?g\.?|w\.?s\.?p\.?)|psi|bar))\b", re.I)
+TEMPERATURE_PATTERN = re.compile(r"[+-]?\d+(?:\.\d+)?\s*°?\s*[CF]\s*(?:to|[-–])\s*[+-]?\d+(?:\.\d+)?\s*°?\s*[CF]", re.I)
 CERTIFICATION_PATTERN = re.compile(r"\b(?:API\s*\d+|ASME\s*[A-Z]?\d+[\w.-]*|ISO\s*\d+[\w.-]*|CE|ATEX|3-A)\b", re.I)
 LEGAL_ENTITY_PATTERN = re.compile(
-    r"\b((?:[A-Z][\w&.-]*\s+){0,4}(?:GmbH|Corporation|Inc\.?|LLC|Ltd\.?|Limited|S\.A\.))\b"
+    r"\b([A-Z][\w&.-]*(?:\s+[A-Z][\w&.-]*){0,4},?\s+(?:GmbH|Corporation|Inc\.?|LLC|Ltd\.?|Limited|S\.A\.))\b"
 )
 
 
@@ -317,18 +317,94 @@ def _best_product_heading(lines: list[str]) -> str | None:
         lowered = line.lower()
         if any(
             blocked in lowered
-            for blocked in ("instruction", "installation", "operation", "maintenance", "contents", "page ", "before using", "using an", "must be", "read and")
+            for blocked in (
+                "instruction", "installation", "operation", "maintenance", "contents", "page ", "before using",
+                "using an", "must be", "read and", "all series", " are ", "listed", "tested", "rated",
+            )
         ):
             continue
         score = 0
-        if PRODUCT_TYPE_PATTERN.search(line):
+        product_type = PRODUCT_TYPE_PATTERN.search(line)
+        if product_type:
             score += 4
+            if product_type.end() == len(line):
+                score += 3
         if line == line.title() or re.search(r"\b[A-Z]{2,}\b", line):
             score += 2
         score += min(frequency[line], 4)
         score -= len(line) // 45
         candidates.append((score, line))
     return max(candidates, default=(0, ""), key=lambda item: item[0])[1] or None
+
+
+def _spanned_field_label(lines: list[str], index: int, allowed_fields: set[str]) -> tuple[str, int] | None:
+    """Recognise a table header split over up to three extracted PDF lines."""
+    for span in (3, 2, 1):
+        if index + span > len(lines):
+            continue
+        field = _field_for_label(" ".join(lines[index : index + span]))
+        if field in allowed_fields:
+            return field, index + span
+    return None
+
+
+def _extract_compact_spec_grid(
+    result: SourceRow,
+    lines: list[str],
+    filename: str,
+    page: int,
+    method: str,
+    field_patterns: dict[str, re.Pattern[str]],
+) -> None:
+    """Recover a product-family spec grid whose headers wrap across PDF text lines.
+
+    This reads only a short run of known column headers followed by the first
+    matching value for each header. It therefore improves ordinary manufacturer
+    datasheets without turning a series table into invented individual SKUs.
+    """
+    headers: list[tuple[int, int, str]] = []
+    allowed_fields = set(field_patterns)
+    for index in range(len(lines)):
+        matched = _spanned_field_label(lines, index, allowed_fields)
+        if matched:
+            field, end = matched
+            headers.append((index, end, field))
+
+    for header_start, _, _ in headers:
+        nearby = [header for header in headers if header_start <= header[0] < header_start + 14]
+        fields = {field for _, _, field in nearby}
+        if len(fields) < 3:
+            continue
+        value_start = max(end for _, end, _ in nearby)
+        values = lines[value_start : value_start + 20]
+        if not values:
+            continue
+        found_fields: set[str] = set()
+        for value in values:
+            for field, pattern in field_patterns.items():
+                if field not in fields or field in found_fields:
+                    continue
+                match = pattern.search(value)
+                if not match:
+                    continue
+                raw_value = value if field == "end_connection" else match.group(0)
+                _add_structural_candidate(
+                    result,
+                    field,
+                    raw_value,
+                    filename,
+                    page,
+                    f"spec grid: {field.replace('_', ' ')} | {value}",
+                    method,
+                    inferred=True,
+                )
+                found_fields.add(field)
+        if found_fields:
+            return
+
+
+def _canonical_product_type(raw_value: str) -> str:
+    return re.sub(r"\bvalves\b", "Valve", raw_value, flags=re.I).rstrip("s")
 
 
 def _extract_structural_pdf_text(text: str, filename: str, page: int, method: str) -> SourceRow:
@@ -343,6 +419,7 @@ def _extract_structural_pdf_text(text: str, filename: str, page: int, method: st
         "temperature_range": TEMPERATURE_PATTERN,
         "certifications": CERTIFICATION_PATTERN,
     }
+    _extract_compact_spec_grid(result, lines, filename, page, method, field_patterns)
     for index, label in enumerate(lines):
         field = _field_for_label(label)
         if not field or field not in field_patterns:
@@ -375,7 +452,16 @@ def _extract_document_identity(page_texts: list[tuple[int, str]], filename: str)
         _add_structural_candidate(result, "product_title", title, filename, page, title, "pdf_layout_inference", inferred=True)
         product_type = PRODUCT_TYPE_PATTERN.search(title)
         if product_type:
-            _add_structural_candidate(result, "product_type", product_type.group(0), filename, page, title, "pdf_layout_inference", inferred=True)
+            _add_structural_candidate(
+                result,
+                "product_type",
+                _canonical_product_type(product_type.group(0)),
+                filename,
+                page,
+                title,
+                "pdf_layout_inference",
+                inferred=True,
+            )
 
     entities: list[tuple[str, int]] = []
     for page_number, text in page_texts:

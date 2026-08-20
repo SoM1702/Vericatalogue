@@ -127,6 +127,46 @@ def test_explicit_catalog_table_becomes_isolated_product_rows() -> None:
     assert rows[0].candidates["pressure_rating"][0].evidence.method == "pdf_table_row_extraction"
 
 
+def test_wrapped_pdf_spec_grid_recovers_family_level_values_without_inventing_skus(tmp_path) -> None:
+    payload = _text_pdf(
+        [
+            "Bray Industrial, Inc.",
+            "2 Piece Full Port Brass Ball Valves",
+            "Size",
+            "Pressure",
+            "Rating",
+            "Temperature",
+            "Range",
+            "End",
+            "Connections",
+            "Body",
+            "Material",
+            '1/4" to 2"',
+            "600 psi WOG",
+            "-50 F to +400 F",
+            "Threaded - NPT",
+            "Brass",
+        ]
+    )
+
+    candidates = _candidate_map(parse_pdf("public_style_datasheet.pdf", payload))
+    assert candidates["manufacturer"].raw_value == "Bray Industrial, Inc"
+    assert candidates["product_title"].raw_value == "2 Piece Full Port Brass Ball Valves"
+    assert candidates["product_type"].raw_value == "Ball Valve"
+    assert candidates["material"].raw_value == "Brass"
+    assert candidates["size"].raw_value == '1/4" to 2"'
+    assert candidates["end_connection"].raw_value == "Threaded - NPT"
+    assert candidates["pressure_rating"].raw_value == "600 psi WOG"
+    assert candidates["temperature_range"].raw_value == "-50 F to +400 F"
+    assert all(candidate.inferred for candidate in candidates.values())
+
+    product = CatalogService(ProductRepository(tmp_path / "family.sqlite3")).enrich(parse_pdf("public_style_datasheet.pdf", payload))
+    attributes = {attribute.field: attribute for attribute in product.attributes}
+    assert attributes["size"].normalized_value and attributes["size"].normalized_value.display == '1/4" to 2"'
+    assert attributes["pressure_rating"].normalized_value and attributes["pressure_rating"].normalized_value.display == "600 WOG"
+    assert attributes["temperature_range"].normalized_value and attributes["temperature_range"].normalized_value.display == "-45.556 to 204.444 °C"
+
+
 @pytest.mark.skipif(shutil.which("tesseract") is None, reason="Local Tesseract OCR is unavailable")
 def test_scanned_labelled_pdf_uses_local_ocr() -> None:
     payload = _scanned_pdf(
