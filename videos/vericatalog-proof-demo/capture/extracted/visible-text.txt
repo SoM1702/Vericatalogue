@@ -1,0 +1,4 @@
+VeriCatalog Proof
+AI can extract catalog data. Industrial commerce needs proof before that data reaches a PIM.
+Every retained attribute keeps source evidence, normalization, validation, and a human-review state.
+Synthetic demo inputs are used in the product walkthrough.

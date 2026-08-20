@@ -1,0 +1,407 @@
+<template>
+  <style>
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      isolation: isolate;
+      color: #092833;
+      font: inherit;
+    }
+
+    #evidence02-bg {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    #evidence02-bg::before {
+      position: absolute;
+      top: 92px;
+      right: 0;
+      width: 950px;
+      height: 700px;
+      border: 1px solid rgba(185, 108, 0, 0.12);
+      border-radius: 14px 0 0 14px;
+      background: rgba(185, 108, 0, 0.025);
+      content: "";
+    }
+
+    #evidence02-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    #evidence02-zoom-outer,
+    #evidence02-zoom-inner {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    #evidence02-zoom-inner {
+      overflow: visible;
+    }
+
+    #evidence02-rule {
+      position: absolute;
+      top: 178px;
+      left: 110px;
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #b96c00;
+      transform-origin: left center;
+    }
+
+    #evidence02-eyebrow {
+      position: absolute;
+      top: 202px;
+      left: 110px;
+      color: #b96c00;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      line-height: 1;
+    }
+
+    #evidence02-opening-copy {
+      position: absolute;
+      top: 254px;
+      left: 108px;
+      width: 605px;
+      color: #092833;
+      font-size: 57px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+    }
+
+    #evidence02-opening-copy span {
+      display: block;
+    }
+
+    #evidence02-opening-copy span:last-child {
+      color: #0f806f;
+    }
+
+    #evidence02-product-backplate {
+      position: absolute;
+      top: 164px;
+      left: 804px;
+      width: 1040px;
+      height: 606px;
+      border: 1px solid rgba(185, 108, 0, 0.14);
+      border-radius: 18px;
+      background: rgba(185, 108, 0, 0.08);
+    }
+
+    #evidence02-product-shell {
+      position: absolute;
+      top: 180px;
+      left: 822px;
+      width: 1022px;
+      height: 576px;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: #ffffff;
+      filter: url(#evidence02-streak-filter);
+      will-change: transform, opacity;
+    }
+
+    #evidence02-product-shell img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #evidence02-product-tint {
+      position: absolute;
+      inset: 0;
+      border: 8px solid rgba(255, 255, 255, 0.36);
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    #evidence02-retained-target {
+      position: absolute;
+      top: 337px;
+      left: 276px;
+      width: 282px;
+      height: 76px;
+      border: 2px solid #b96c00;
+      border-radius: 10px;
+      background: rgba(185, 108, 0, 0.055);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #evidence02-retained-target span {
+      position: absolute;
+      top: -30px;
+      left: -2px;
+      padding: 7px 12px;
+      border-radius: 100px;
+      background: #b96c00;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #evidence02-connectors {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    #evidence02-connectors path {
+      fill: none;
+      stroke: #b96c00;
+      stroke-linecap: round;
+      stroke-width: 2;
+      stroke-dasharray: 150;
+      stroke-dashoffset: 150;
+    }
+
+    .frame-evidence02-callout {
+      position: absolute;
+      z-index: 3;
+      width: 240px;
+      min-height: 82px;
+      padding: 14px 16px 13px;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.97);
+      color: #092833;
+      will-change: transform, opacity;
+    }
+
+    .frame-evidence02-callout-label {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 8px;
+      color: #b96c00;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .frame-evidence02-callout-value {
+      color: #092833;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.26;
+    }
+
+    #evidence02-callout-source {
+      top: 88px;
+      left: 680px;
+      width: 258px;
+    }
+
+    #evidence02-callout-page {
+      top: 110px;
+      left: 1540px;
+      width: 262px;
+    }
+
+    #evidence02-callout-raw {
+      top: 482px;
+      left: 1588px;
+      width: 218px;
+    }
+
+    #evidence02-callout-normalized {
+      top: 692px;
+      left: 1330px;
+      width: 288px;
+    }
+
+    #evidence02-final-copy {
+      position: absolute;
+      top: 612px;
+      left: 108px;
+      z-index: 5;
+      width: 402px;
+      padding: 18px 20px 19px;
+      border-left: 4px solid #b96c00;
+      border-radius: 0 12px 12px 0;
+      background: rgba(185, 108, 0, 0.08);
+      color: #092833;
+      font-size: 43px;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      will-change: transform, opacity;
+    }
+
+    #evidence02-final-copy span {
+      display: block;
+    }
+
+    #evidence02-final-copy span:last-child {
+      color: #0f806f;
+    }
+
+    #evidence02-progress {
+      position: absolute;
+      right: 112px;
+      bottom: 197px;
+      width: 334px;
+      height: 3px;
+      border-radius: 0;
+      background: rgba(185, 108, 0, 0.08);
+    }
+
+    #evidence02-progress-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      background: #b96c00;
+      transform-origin: left center;
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-field-evidence" data-width="1920" data-height="1080" data-duration="14.5" data-layout-allow-overlap data-layout-allow-overflow>
+    <div id="evidence02-bg" class="clip" data-start="0" data-duration="14.5" data-track-index="0"></div>
+
+    <div id="evidence02-stage" class="clip" data-start="0" data-duration="14.5" data-track-index="1">
+      <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+        <filter id="evidence02-streak-filter" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur id="evidence02-streak-blur" in="SourceGraphic" stdDeviation="18 0" />
+        </filter>
+      </svg>
+
+      <div id="evidence02-rule"></div>
+      <div id="evidence02-eyebrow">FIELD-LEVEL PROOF</div>
+      <div id="evidence02-opening-copy">
+        <span>A structured record</span>
+        <span>is not enough.</span>
+      </div>
+
+      <div id="evidence02-zoom-outer">
+        <div id="evidence02-zoom-inner" data-layout-allow-overflow>
+          <div id="evidence02-product-backplate"></div>
+          <div id="evidence02-product-shell">
+            <img src="assets/vericatalog-proof-demo.png" alt="Evidence-backed product record interface" />
+            <div id="evidence02-product-tint"></div>
+            <div id="evidence02-retained-target"><span>Evidence retained</span></div>
+          </div>
+
+          <svg id="evidence02-connectors" viewBox="0 0 1920 1080" aria-hidden="true">
+            <path id="evidence02-line-source" d="M 938 130 L 1006 184 L 1100 292" />
+            <path id="evidence02-line-page" d="M 1540 156 L 1450 194 L 1358 304" />
+            <path id="evidence02-line-raw" d="M 1588 524 L 1512 522 L 1418 482" />
+            <path id="evidence02-line-normalized" d="M 1480 692 L 1422 644 L 1378 580" />
+          </svg>
+
+          <div id="evidence02-callout-source" class="frame-evidence02-callout">
+            <div class="frame-evidence02-callout-label"><span>Source</span><span>file</span></div>
+            <div class="frame-evidence02-callout-value">synthetic_ball_valve_catalog.pdf</div>
+          </div>
+          <div id="evidence02-callout-page" class="frame-evidence02-callout">
+            <div class="frame-evidence02-callout-label"><span>Page</span><span>+ snippet</span></div>
+            <div class="frame-evidence02-callout-value">Retained catalog excerpt</div>
+          </div>
+          <div id="evidence02-callout-raw" class="frame-evidence02-callout">
+            <div class="frame-evidence02-callout-label"><span>Raw</span><span>value</span></div>
+            <div class="frame-evidence02-callout-value">SS304</div>
+          </div>
+          <div id="evidence02-callout-normalized" class="frame-evidence02-callout">
+            <div class="frame-evidence02-callout-label"><span>Normalized</span><span>value</span></div>
+            <div class="frame-evidence02-callout-value">Stainless Steel 304</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="evidence02-final-copy"><span>Every field stays</span><span>inspectable.</span></div>
+      <div id="evidence02-progress"><div id="evidence02-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+      const product = document.getElementById("evidence02-product-shell");
+      const opening = document.getElementById("evidence02-opening-copy");
+      const eyebrow = document.getElementById("evidence02-eyebrow");
+      const rule = document.getElementById("evidence02-rule");
+      const backplate = document.getElementById("evidence02-product-backplate");
+      const zoomOuter = document.getElementById("evidence02-zoom-outer");
+      const zoomInner = document.getElementById("evidence02-zoom-inner");
+      const target = document.getElementById("evidence02-retained-target");
+      const finalCopy = document.getElementById("evidence02-final-copy");
+      const progressFill = document.getElementById("evidence02-progress-fill");
+      const blurNode = document.getElementById("evidence02-streak-blur");
+      const blurProxy = { value: 18 };
+
+      const writeBlur = () => blurNode.setAttribute("stdDeviation", `${blurProxy.value} 0`);
+      writeBlur();
+
+      tl.fromTo(rule, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.38, ease: "power3.out" }, 0.06);
+      tl.fromTo(eyebrow, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: 0.46, ease: "power3.out" }, 0.13);
+      tl.fromTo(opening, { opacity: 0, x: -78 }, { opacity: 1, x: 0, duration: 0.72, ease: "power4.out" }, 0.22);
+      tl.fromTo(backplate, { opacity: 0, x: 280, scale: 0.97 }, { opacity: 1, x: 0, scale: 1, duration: 0.62, ease: "power4.out" }, 0.06);
+      tl.fromTo(product, { opacity: 0, x: 570, scale: 0.94 }, { opacity: 1, x: 0, scale: 1, duration: 0.62, ease: "power4.out" }, 0.06);
+      tl.to(blurProxy, { value: 0, duration: 0.62, ease: "power4.out", onUpdate: writeBlur }, 0.06);
+
+      const CONTENT = [
+        { id: "source", title: "Source file", hold: 0.45 },
+        { id: "page", title: "Page + snippet", hold: 0.45 },
+        { id: "raw", title: "Raw value", hold: 0.45 },
+        { id: "normalized", title: "Normalized value", hold: 0.55 },
+      ];
+      const BASE_DURATION = 0.45;
+      const SEC_PER_CHAR = 0.025;
+      let cursor = 3.25;
+      const TIMELINE = CONTENT.map((entry) => {
+        const duration = BASE_DURATION + entry.title.length * SEC_PER_CHAR + entry.hold;
+        const start = cursor;
+        cursor += duration;
+        return { ...entry, start, end: cursor };
+      });
+
+      TIMELINE.forEach((entry, index) => {
+        const card = document.getElementById(`evidence02-callout-${entry.id}`);
+        const line = document.getElementById(`evidence02-line-${entry.id}`);
+        const words = card.querySelectorAll(".frame-evidence02-callout-label span");
+        const direction = index % 2 === 0 ? -34 : 34;
+
+        tl.fromTo(card, { opacity: 0, x: direction, y: 14, scale: 0.97 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.48, ease: "power3.out" }, entry.start);
+        tl.fromTo(line, { opacity: 0, strokeDashoffset: 150 }, { opacity: 0.72, strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, entry.start + 0.08);
+        tl.fromTo(words, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.24, stagger: 0.07, ease: "power2.out" }, entry.start + 0.14);
+      });
+
+      const targetRect = target.getBoundingClientRect();
+      const targetOffsetX = targetRect.left + targetRect.width / 2 - 960;
+      const targetOffsetY = targetRect.top + targetRect.height / 2 - 540;
+      const zoomScale = Math.min(1.12, (0.88 * 1920) / targetRect.width, (0.88 * 1080) / targetRect.height);
+
+      tl.fromTo(target, { opacity: 0, scale: 0.84 }, { opacity: 1, scale: 1, duration: 0.42, ease: "power3.out" }, 8.62);
+      tl.to(zoomOuter, { scale: zoomScale, duration: 1.45, ease: "power3.inOut" }, 8.8);
+      tl.to(zoomInner, { x: -targetOffsetX, y: -targetOffsetY, duration: 1.45, ease: "power3.inOut" }, 8.8);
+      tl.fromTo(finalCopy, { opacity: 0, x: -42, y: 18 }, { opacity: 1, x: 0, y: 0, duration: 0.58, ease: "power3.out" }, 10.18);
+      tl.fromTo(progressFill, { scaleX: 0 }, { scaleX: 1, duration: 10.9, ease: "none" }, 0);
+
+      window.__timelines["02-field-evidence"] = tl;
+    })();
+  </script>
+</template>

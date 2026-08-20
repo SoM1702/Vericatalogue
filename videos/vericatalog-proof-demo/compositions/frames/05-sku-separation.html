@@ -1,0 +1,553 @@
+<template>
+  <style>
+    #root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      color: #092833;
+      font-family: system-ui, sans-serif;
+    }
+
+    .clip {
+      position: absolute;
+      inset: 0;
+    }
+
+    .sku05-background {
+      background:
+        radial-gradient(circle at 29% 47%, rgba(185, 108, 0, 0.105) 0, rgba(185, 108, 0, 0.035) 18%, transparent 38%),
+        radial-gradient(circle at 71% 47%, rgba(185, 108, 0, 0.105) 0, rgba(185, 108, 0, 0.035) 18%, transparent 38%),
+        #ffffff;
+    }
+
+    .sku05-background::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      opacity: 0.42;
+      background-image: linear-gradient(rgba(185, 108, 0, 0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(185, 108, 0, 0.028) 1px, transparent 1px);
+      background-size: 5cqw 5cqw;
+      mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.55) 73%, transparent 92%);
+    }
+
+    .sku05-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 7.25cqh;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .sku05-title-inner {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.1cqh;
+    }
+
+    .sku05-eyebrow {
+      color: #9b5a00;
+      font-size: 1.12cqw;
+      font-weight: 650;
+      letter-spacing: 0.12em;
+      line-height: 1;
+    }
+
+    .sku05-title-copy {
+      margin: 0;
+      color: #092833;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    .sku05-title-copy span {
+      color: #9b5a00;
+    }
+
+    .sku05-accent-line {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #b96c00;
+    }
+
+    .sku05-supplier-band {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 24.2cqh;
+      pointer-events: none;
+    }
+
+    .sku05-supplier-sheet {
+      position: relative;
+      width: 76cqw;
+      height: 15.8cqh;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+    }
+
+    .sku05-supplier-sheet::after {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      content: "";
+      background: rgba(185, 108, 0, 0.18);
+    }
+
+    .sku05-sheet-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 4.5cqh;
+      padding: 0 2.15cqw;
+      border-bottom: 1px solid rgba(185, 108, 0, 0.16);
+      color: #0f806f;
+      font-size: 0.88cqw;
+      font-weight: 650;
+      letter-spacing: 0.1em;
+      line-height: 1;
+    }
+
+    .sku05-sheet-page-count {
+      padding: 0.62cqh 0.9cqw;
+      border-radius: 100px;
+      background: rgba(185, 108, 0, 0.08);
+      color: #9b5a00;
+      font-size: 0.76cqw;
+      letter-spacing: 0.07em;
+    }
+
+    .sku05-sheet-rows {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 11.3cqh;
+    }
+
+    .sku05-sheet-row {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.7cqh;
+      padding: 0 2.15cqw;
+    }
+
+    .sku05-sheet-row + .sku05-sheet-row {
+      border-left: 1px solid rgba(185, 108, 0, 0.13);
+    }
+
+    .sku05-sheet-row strong {
+      color: #092833;
+      font-size: 1.34cqw;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .sku05-sheet-row span {
+      color: #0f806f;
+      font-size: 0.91cqw;
+      line-height: 1.2;
+    }
+
+    .sku05-stage {
+      perspective: 1800px;
+      pointer-events: none;
+    }
+
+    .sku05-card-slot {
+      position: absolute;
+      top: 29.8cqh;
+      width: 33.3cqw;
+      height: 39.8cqh;
+      transform-style: preserve-3d;
+    }
+
+    .sku05-card-slot-left {
+      left: 13.3cqw;
+    }
+
+    .sku05-card-slot-right {
+      right: 13.3cqw;
+    }
+
+    .sku05-card-float,
+    .sku05-card-shell {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+    .sku05-card-shell {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.93);
+      backface-visibility: hidden;
+    }
+
+    .sku05-left-card {
+      box-shadow: 18px 13px 31px rgba(185, 108, 0, 0.105);
+    }
+
+    .sku05-right-card {
+      box-shadow: -18px 13px 31px rgba(185, 108, 0, 0.105);
+    }
+
+    .sku05-card-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 8.4cqh;
+      padding: 0 2.05cqw;
+      border-bottom: 1px solid rgba(185, 108, 0, 0.15);
+    }
+
+    .sku05-card-kicker {
+      color: #9b5a00;
+      font-size: 0.87cqw;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      line-height: 1;
+    }
+
+    .sku05-boundary-chip {
+      padding: 0.6cqh 0.75cqw;
+      border: 1px solid rgba(185, 108, 0, 0.2);
+      border-radius: 100px;
+      color: #0f806f;
+      font-size: 0.72cqw;
+      font-weight: 650;
+      letter-spacing: 0.07em;
+      line-height: 1;
+    }
+
+    .sku05-part-number {
+      margin: 2.25cqh 2.05cqw 1.55cqh;
+      color: #092833;
+      font-size: 2.05cqw;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .sku05-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.8cqw;
+      margin: 0 2.05cqw;
+    }
+
+    .sku05-field {
+      min-height: 12.3cqh;
+      padding: 1.35cqh 0.82cqw;
+      border-radius: 10px;
+      background: rgba(185, 108, 0, 0.04);
+    }
+
+    .sku05-field-label {
+      display: block;
+      margin-bottom: 1.1cqh;
+      color: #0f806f;
+      font-size: 0.68cqw;
+      font-weight: 650;
+      letter-spacing: 0.1em;
+      line-height: 1;
+    }
+
+    .sku05-field-value {
+      display: block;
+      color: #092833;
+      font-size: 1.05cqw;
+      font-weight: 650;
+      letter-spacing: -0.025em;
+      line-height: 1.17;
+    }
+
+    .sku05-record-line {
+      display: flex;
+      align-items: center;
+      gap: 0.65cqw;
+      margin: auto 2.05cqw 1.75cqh;
+      color: #0f806f;
+      font-size: 0.79cqw;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .sku05-record-dot {
+      width: 0.48cqw;
+      height: 0.48cqw;
+      border-radius: 50%;
+      background: #b96c00;
+    }
+
+    .sku05-badge {
+      position: absolute;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.55cqw;
+      box-sizing: border-box;
+      height: 4.55cqh;
+      padding: 0 1.15cqw;
+      border-radius: 100px;
+      background: #b96c00;
+      color: #05181f;
+      font-size: 0.87cqw;
+      font-weight: 700;
+      letter-spacing: 0.025em;
+      line-height: 1;
+      transform-origin: 50% 50%;
+    }
+
+    .sku05-badge-mark {
+      display: grid;
+      width: 1.1cqw;
+      height: 1.1cqw;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.21);
+      font-size: 0.73cqw;
+    }
+
+    .sku05-badge-left {
+      top: 48.4cqh;
+      left: 43.5cqw;
+    }
+
+    .sku05-badge-right {
+      top: 53.3cqh;
+      right: 43.0cqw;
+    }
+
+    .sku05-statement {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 73.2cqh;
+      pointer-events: none;
+    }
+
+    .sku05-statement-inner {
+      width: 47cqw;
+      box-sizing: border-box;
+      padding: 1.35cqh 1.45cqw 1.45cqh;
+      border-left: 4px solid #b96c00;
+      border-radius: 0 12px 12px 0;
+      background: rgba(185, 108, 0, 0.08);
+      color: #092833;
+      font-size: 1.52cqw;
+      font-weight: 650;
+      letter-spacing: -0.025em;
+      line-height: 1.24;
+      text-align: center;
+    }
+
+    .sku05-statement-inner span {
+      color: #9b5a00;
+    }
+
+    .sku05-progress {
+      display: flex;
+      align-items: flex-end;
+      padding: 0 5cqw 18.2cqh;
+      pointer-events: none;
+    }
+
+    .sku05-progress-track {
+      width: 100%;
+      height: 3px;
+      overflow: hidden;
+      background: rgba(185, 108, 0, 0.08);
+    }
+
+    .sku05-progress-fill {
+      width: 52%;
+      height: 100%;
+      background: #b96c00;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-sku-separation" data-start="0" data-duration="18.5" data-width="1920" data-height="1080" data-layout-allow-overlap>
+    <div class="clip sku05-background" data-start="0" data-duration="18.5" data-track-index="0"></div>
+
+    <section class="clip sku05-title" data-start="0" data-duration="18.5" data-track-index="1" aria-label="One page. Two products.">
+      <div id="sku05-title-inner" class="sku05-title-inner">
+        <div class="sku05-eyebrow">PROVEN RECORD BOUNDARIES</div>
+        <h1 class="sku05-title-copy">One page. <span>Two products.</span></h1>
+        <div class="sku05-accent-line"></div>
+      </div>
+    </section>
+
+    <section class="clip sku05-supplier-band" data-start="0" data-duration="18.5" data-track-index="2" aria-label="Shared supplier catalog page">
+      <div id="sku05-supplier-sheet" class="sku05-supplier-sheet">
+        <div class="sku05-sheet-meta">
+          <span>SUPPLIER CATALOG</span>
+          <span class="sku05-sheet-page-count">MULTI-SKU PAGE</span>
+        </div>
+        <div class="sku05-sheet-rows">
+          <div class="sku05-sheet-row">
+            <strong>NFS-BV-2001</strong>
+            <span>Row evidence on one source page</span>
+          </div>
+          <div class="sku05-sheet-row">
+            <strong>NFS-BV-2002</strong>
+            <span>Row evidence on the same source page</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="clip sku05-stage" data-start="0" data-duration="18.5" data-track-index="3" aria-label="Separate SKU records">
+      <div id="sku05-left-entry" class="sku05-card-slot sku05-card-slot-left">
+        <div id="sku05-left-float" class="sku05-card-float">
+          <article id="sku05-left-card" class="sku05-card-shell sku05-left-card">
+            <div class="sku05-card-topline">
+              <span class="sku05-card-kicker">SUPPLIER RECORD</span>
+              <span class="sku05-boundary-chip">ROW 01</span>
+            </div>
+            <h2 id="sku05-left-number" class="sku05-part-number">NFS-BV-2001</h2>
+            <div class="sku05-fields">
+              <div id="sku05-left-material" class="sku05-field">
+                <span class="sku05-field-label">MATERIAL</span>
+                <span class="sku05-field-value">SS304</span>
+              </div>
+              <div id="sku05-left-size" class="sku05-field">
+                <span class="sku05-field-label">SIZE</span>
+                <span class="sku05-field-value">1 in</span>
+              </div>
+              <div id="sku05-left-pressure" class="sku05-field">
+                <span class="sku05-field-label">PRESSURE</span>
+                <span class="sku05-field-value">600 WOG</span>
+              </div>
+            </div>
+            <div id="sku05-left-record" class="sku05-record-line"><span class="sku05-record-dot"></span>Bounded to SKU 2001</div>
+          </article>
+        </div>
+      </div>
+
+      <div id="sku05-right-entry" class="sku05-card-slot sku05-card-slot-right">
+        <div id="sku05-right-float" class="sku05-card-float">
+          <article id="sku05-right-card" class="sku05-card-shell sku05-right-card">
+            <div class="sku05-card-topline">
+              <span class="sku05-card-kicker">SUPPLIER RECORD</span>
+              <span class="sku05-boundary-chip">ROW 02</span>
+            </div>
+            <h2 id="sku05-right-number" class="sku05-part-number">NFS-BV-2002</h2>
+            <div class="sku05-fields">
+              <div id="sku05-right-material" class="sku05-field">
+                <span class="sku05-field-label">MATERIAL</span>
+                <span class="sku05-field-value">Brass</span>
+              </div>
+              <div id="sku05-right-size" class="sku05-field">
+                <span class="sku05-field-label">SIZE</span>
+                <span class="sku05-field-value">2 in</span>
+              </div>
+              <div id="sku05-right-pressure" class="sku05-field">
+                <span class="sku05-field-label">PRESSURE</span>
+                <span class="sku05-field-value">300 WOG</span>
+              </div>
+            </div>
+            <div id="sku05-right-record" class="sku05-record-line"><span class="sku05-record-dot"></span>Bounded to SKU 2002</div>
+          </article>
+        </div>
+      </div>
+
+      <div id="sku05-badge-left" class="sku05-badge sku05-badge-left"><span class="sku05-badge-mark">✓</span>separate evidence</div>
+      <div id="sku05-badge-right" class="sku05-badge sku05-badge-right"><span class="sku05-badge-mark">✓</span>separate record</div>
+    </section>
+
+    <section class="clip sku05-statement" data-start="0" data-duration="18.5" data-track-index="4" aria-label="Never merge neighboring SKU values.">
+      <div id="sku05-statement-inner" class="sku05-statement-inner">Never merge neighboring <span>SKU values.</span></div>
+    </section>
+
+    <div class="clip sku05-progress" data-start="0" data-duration="18.5" data-track-index="5" aria-hidden="true">
+      <div class="sku05-progress-track"><div class="sku05-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      const title = document.getElementById("sku05-title-inner");
+      const supplierSheet = document.getElementById("sku05-supplier-sheet");
+      const leftEntry = document.getElementById("sku05-left-entry");
+      const rightEntry = document.getElementById("sku05-right-entry");
+      const leftCard = document.getElementById("sku05-left-card");
+      const rightCard = document.getElementById("sku05-right-card");
+      const leftFloat = document.getElementById("sku05-left-float");
+      const rightFloat = document.getElementById("sku05-right-float");
+      const leftBadge = document.getElementById("sku05-badge-left");
+      const rightBadge = document.getElementById("sku05-badge-right");
+      const statement = document.getElementById("sku05-statement-inner");
+      const leftCopy = [
+        document.getElementById("sku05-left-number"),
+        document.getElementById("sku05-left-material"),
+        document.getElementById("sku05-left-size"),
+        document.getElementById("sku05-left-pressure"),
+        document.getElementById("sku05-left-record"),
+      ];
+      const rightCopy = [
+        document.getElementById("sku05-right-number"),
+        document.getElementById("sku05-right-material"),
+        document.getElementById("sku05-right-size"),
+        document.getElementById("sku05-right-pressure"),
+        document.getElementById("sku05-right-record"),
+      ];
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(title, { y: -64, opacity: 0 }, { y: 0, opacity: 1, duration: 1.25, ease: "power3.out" }, 0);
+      tl.fromTo(supplierSheet, { y: 16, scale: 0.985, opacity: 0 }, { y: 0, scale: 1, opacity: 0.72, duration: 0.9, ease: "power3.out" }, 1.35);
+
+      tl.fromTo(leftEntry, { x: -360, scale: 0.85, opacity: 0 }, { x: 0, scale: 1, opacity: 1, duration: 1.12, ease: "power3.out" }, 3.0);
+      tl.fromTo(leftCard, { rotateY: 23 }, { rotateY: 13, duration: 1.12, ease: "power3.out" }, 3.0);
+      tl.fromTo(rightEntry, { x: 360, scale: 0.85, opacity: 0 }, { x: 0, scale: 1, opacity: 1, duration: 1.12, ease: "power3.out" }, 3.22);
+      tl.fromTo(rightCard, { rotateY: -23 }, { rotateY: -13, duration: 1.12, ease: "power3.out" }, 3.22);
+
+      leftCopy.forEach((element, index) => {
+        tl.fromTo(element, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.52, ease: "power2.out" }, 3.7 + index * 0.66);
+      });
+      rightCopy.forEach((element, index) => {
+        tl.fromTo(element, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.52, ease: "power2.out" }, 3.94 + index * 0.66);
+      });
+      tl.fromTo(supplierSheet, { scale: 1, opacity: 0.72 }, { scale: 0.96, opacity: 0.2, duration: 2.35, ease: "power2.out" }, 5.4);
+
+      tl.fromTo(leftBadge, { scale: 0, y: 14, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.58, ease: "power3.out" }, 9.55);
+      tl.fromTo(rightBadge, { scale: 0, y: 14, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.58, ease: "power3.out" }, 11.02);
+
+      tl.fromTo(statement, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.82, ease: "power3.out" }, 14.55);
+
+      const phase = { p: 0 };
+      tl.to(phase, {
+        p: Math.PI * 2 * 1.1,
+        duration: 3.25,
+        ease: "none",
+        onUpdate: () => {
+          const progress = phase.p / (Math.PI * 2 * 1.1);
+          const envelope = progress < 0.8 ? 1 : (1 - progress) / 0.2;
+          const offset = Math.sin(phase.p) * 2 * envelope;
+          leftFloat.style.transform = `translateY(${offset}px)`;
+          rightFloat.style.transform = `translateY(${-offset}px)`;
+        },
+      }, 14.75);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-sku-separation"] = tl;
+    })();
+  </script>
+</template>

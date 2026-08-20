@@ -1,0 +1,519 @@
+<template>
+  <style>
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      isolation: isolate;
+      color: #092833;
+      font: inherit;
+    }
+
+    #ai04-ground {
+      position: absolute;
+      inset: 0;
+      background: #FFFFFF;
+    }
+
+    #ai04-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    #ai04-stage::before {
+      position: absolute;
+      top: 112px;
+      left: 50%;
+      width: 1px;
+      height: 675px;
+      margin-left: -1px;
+      background: rgba(185, 108, 0, 0.08);
+      content: "";
+    }
+
+    #ai04-source-card {
+      position: absolute;
+      top: 224px;
+      left: 50%;
+      width: 620px;
+      height: 178px;
+      margin-left: -310px;
+      box-sizing: border-box;
+      padding: 27px 31px;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    #ai04-source-label,
+    #ai04-gate-kicker,
+    #ai04-candidate-kicker,
+    #ai04-source-link,
+    #ai04-lock-line {
+      color: #9B5A00;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    #ai04-source-type-row {
+      display: flex;
+      align-items: baseline;
+      min-width: 530px;
+      margin-top: 23px;
+      color: #092833;
+      font-size: 38px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+      white-space: pre;
+    }
+
+    #ai04-source-text {
+      white-space: pre;
+    }
+
+    #ai04-source-cursor {
+      display: inline-block;
+      width: 12px;
+      height: 35px;
+      margin-left: 8px;
+      background: #B96C00;
+      vertical-align: -3px;
+    }
+
+    #ai04-rail {
+      position: absolute;
+      top: 506px;
+      left: 50%;
+      width: 786px;
+      height: 2px;
+      margin-left: -393px;
+      background: rgba(185, 108, 0, 0.2);
+      transform-origin: left center;
+      will-change: transform, opacity;
+    }
+
+    #ai04-rail::before,
+    #ai04-rail::after {
+      position: absolute;
+      top: -4px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #B96C00;
+      content: "";
+    }
+
+    #ai04-rail::before {
+      left: -4px;
+    }
+
+    #ai04-rail::after {
+      right: -4px;
+    }
+
+    #ai04-mapping-label {
+      position: absolute;
+      top: 335px;
+      left: 50%;
+      width: 430px;
+      margin-left: -215px;
+      color: #092833;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      text-align: center;
+      will-change: transform, opacity;
+    }
+
+    #ai04-gate {
+      position: absolute;
+      top: 408px;
+      left: 50%;
+      width: 392px;
+      height: 226px;
+      margin-left: -196px;
+      box-sizing: border-box;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 32px;
+      background: rgba(185, 108, 0, 0.15);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, background-color, border-radius;
+    }
+
+    #ai04-gate-old,
+    #ai04-gate-new {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    #ai04-gate-old {
+      color: #9B5A00;
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    #ai04-gate-new {
+      flex-direction: column;
+      gap: 14px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    #ai04-gate-title {
+      color: #092833;
+      font-size: 29px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+
+    #ai04-gate-rule {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #B96C00;
+    }
+
+    #ai04-gate-subtitle {
+      width: 250px;
+      color: #0F806F;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.45;
+    }
+
+    #ai04-candidate-card {
+      position: absolute;
+      top: 410px;
+      left: 50%;
+      width: 502px;
+      height: 224px;
+      margin-left: 460px;
+      box-sizing: border-box;
+      padding: 27px 29px;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+
+    #ai04-candidate-title {
+      margin-top: 13px;
+      color: #092833;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    #ai04-candidate-title span {
+      color: #0F806F;
+      font-weight: 400;
+    }
+
+    #ai04-candidate-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 27px;
+    }
+
+    #ai04-inferred-pill {
+      display: inline-block;
+      padding: 9px 14px 8px;
+      border: 1px solid rgba(185, 108, 0, 0.2);
+      border-radius: 100px;
+      background: rgba(185, 108, 0, 0.08);
+      color: #9B5A00;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      line-height: 1;
+      text-transform: uppercase;
+      will-change: transform, opacity;
+    }
+
+    #ai04-review-pill {
+      display: inline-block;
+      padding: 9px 14px 8px;
+      border: 1px solid rgba(185, 108, 0, 0.2);
+      border-radius: 100px;
+      background: rgba(185, 108, 0, 0.04);
+      color: #092833;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      will-change: transform, opacity;
+    }
+
+    #ai04-source-link {
+      position: absolute;
+      top: 596px;
+      left: 50%;
+      width: 330px;
+      margin-left: -615px;
+      color: #0F806F;
+      font-size: 12px;
+      text-align: center;
+      will-change: transform, opacity;
+    }
+
+    #ai04-lock-row {
+      position: absolute;
+      top: 744px;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      width: 610px;
+      height: 64px;
+      margin-left: -305px;
+      box-sizing: border-box;
+      padding: 0 23px;
+      border-left: 4px solid #B96C00;
+      border-radius: 0 12px 12px 0;
+      background: rgba(185, 108, 0, 0.08);
+      will-change: transform, opacity;
+    }
+
+    #ai04-proof-mark {
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+      margin-right: 15px;
+      overflow: visible;
+    }
+
+    #ai04-proof-mark path {
+      fill: none;
+      stroke: #B96C00;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 4;
+    }
+
+    #ai04-lock-line {
+      color: #092833;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+    }
+
+    #ai04-progress {
+      position: absolute;
+      top: 855px;
+      left: 112px;
+      width: 1696px;
+      height: 3px;
+      background: rgba(185, 108, 0, 0.08);
+    }
+
+    #ai04-progress-fill {
+      width: 100%;
+      height: 100%;
+      background: #B96C00;
+      transform-origin: left center;
+      will-change: transform;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-bounded-ai" data-width="1920" data-height="1080" data-duration="15.4">
+    <div id="ai04-ground" class="clip" data-start="0" data-duration="15.4" data-track-index="0"></div>
+
+    <div id="ai04-stage" class="clip" data-start="0" data-duration="15.4" data-track-index="1">
+      <div id="ai04-rail" aria-hidden="true"></div>
+
+      <div id="ai04-source-card">
+        <div id="ai04-source-label">Source quote</div>
+        <div id="ai04-source-type-row" aria-label="Body material: SS304">
+          <span id="ai04-source-text"></span><span id="ai04-source-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div id="ai04-mapping-label">Map unfamiliar labels</div>
+
+      <div id="ai04-gate">
+        <div id="ai04-gate-old" aria-hidden="true">AI</div>
+        <div id="ai04-gate-new">
+          <div id="ai04-gate-kicker">Source-bound gate</div>
+          <div id="ai04-gate-title">AI candidate mapper</div>
+          <div id="ai04-gate-rule" aria-hidden="true"></div>
+          <div id="ai04-gate-subtitle">Quoted source stays attached</div>
+        </div>
+      </div>
+
+      <div id="ai04-candidate-card">
+        <div id="ai04-candidate-kicker">Candidate mapping</div>
+        <div id="ai04-candidate-title">SS304 <span>→</span> Stainless steel 304</div>
+        <div id="ai04-candidate-footer">
+          <span id="ai04-inferred-pill">Inferred</span>
+          <span id="ai04-review-pill">Human review required</span>
+        </div>
+      </div>
+
+      <div id="ai04-source-link">Source quote retained</div>
+
+      <div id="ai04-lock-row">
+        <svg id="ai04-proof-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path id="ai04-proof-path" d="M 6 16 L 13 23 L 27 8"></path>
+        </svg>
+        <div id="ai04-lock-line">Self-verification blocked</div>
+      </div>
+
+      <div id="ai04-progress" aria-hidden="true"><div id="ai04-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+      const sourceCard = document.getElementById("ai04-source-card");
+      const sourceText = document.getElementById("ai04-source-text");
+      const sourceCursor = document.getElementById("ai04-source-cursor");
+      const rail = document.getElementById("ai04-rail");
+      const mappingLabel = document.getElementById("ai04-mapping-label");
+      const gate = document.getElementById("ai04-gate");
+      const gateOld = document.getElementById("ai04-gate-old");
+      const gateNew = document.getElementById("ai04-gate-new");
+      const candidateCard = document.getElementById("ai04-candidate-card");
+      const inferredPill = document.getElementById("ai04-inferred-pill");
+      const reviewPill = document.getElementById("ai04-review-pill");
+      const sourceLink = document.getElementById("ai04-source-link");
+      const lockRow = document.getElementById("ai04-lock-row");
+      const proofPath = document.getElementById("ai04-proof-path");
+      const progressFill = document.getElementById("ai04-progress-fill");
+      gsap.set([rail, mappingLabel, gate, gateOld, gateNew, candidateCard, inferredPill, reviewPill, sourceLink, lockRow], { autoAlpha: 0 });
+      gsap.set(progressFill, { scaleX: 0 });
+
+
+      tl.fromTo(
+        sourceCard,
+        { autoAlpha: 0, y: 24, scale: 0.97 },
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: "power2.out" },
+        0.12
+      );
+
+      const SOURCE_QUOTE = "“Body material: SS304”";
+      const typeDriver = { length: 0 };
+      tl.to(
+        typeDriver,
+        {
+          length: SOURCE_QUOTE.length,
+          duration: 2.24,
+          ease: "none",
+          onUpdate: () => {
+            sourceText.textContent = SOURCE_QUOTE.substring(0, Math.floor(typeDriver.length));
+          }
+        },
+        0.72
+      );
+
+      const blinkDriver = { phase: 0 };
+      tl.to(
+        blinkDriver,
+        {
+          phase: Math.PI * 2 * 5,
+          duration: 3.5,
+          ease: "none",
+          onUpdate: () => {
+            sourceCursor.style.opacity = Math.sin(blinkDriver.phase) > 0 ? "1" : "0";
+          }
+        },
+        0
+      );
+
+      tl.to(sourceCard, { x: -455, y: 230, scale: 0.62, duration: 0.8, ease: "power2.inOut" }, 3.5);
+      tl.fromTo(rail, { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.56, ease: "power2.out" }, 3.82);
+      tl.fromTo(
+        mappingLabel,
+        { autoAlpha: 0, y: 16 },
+        { autoAlpha: 1, y: 0, duration: 0.48, ease: "power2.out" },
+        3.92
+      );
+
+      tl.fromTo(
+        gate,
+        { autoAlpha: 0, scale: 0.62, borderRadius: 32, backgroundColor: "rgba(185, 108, 0, 0.15)" },
+        { autoAlpha: 1, scale: 0.62, duration: 0.24, ease: "power1.out" },
+        3.78
+      );
+      tl.fromTo(gateOld, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18, ease: "power1.out" }, 3.88);
+      tl.to(
+        gate,
+        {
+          scale: 1,
+          borderRadius: 14,
+          backgroundColor: "#FFFFFF",
+          duration: 0.9,
+          ease: "power2.inOut"
+        },
+        4.18
+      );
+      tl.to(gateOld, { autoAlpha: 0, duration: 0.32, ease: "power1.in" }, 4.18);
+      tl.fromTo(gateNew, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4, ease: "power1.out" }, 4.68);
+      tl.fromTo(
+        sourceLink,
+        { autoAlpha: 0, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.36, ease: "power1.out" },
+        5.42
+      );
+
+      tl.fromTo(
+        candidateCard,
+        { autoAlpha: 0, x: -88, scale: 0.96 },
+        { autoAlpha: 1, x: 0, scale: 1, duration: 0.6, ease: "power2.out" },
+        7.72
+      );
+      tl.fromTo(
+        inferredPill,
+        { autoAlpha: 0, y: 10, scale: 0.94 },
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "power2.out" },
+        8.78
+      );
+      tl.fromTo(
+        reviewPill,
+        { autoAlpha: 0, y: 10, scale: 0.94 },
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.44, ease: "power2.out" },
+        9.82
+      );
+
+      tl.fromTo(
+        lockRow,
+        { autoAlpha: 0, y: 16 },
+        { autoAlpha: 1, y: 0, duration: 0.54, ease: "power2.out" },
+        11.96
+      );
+
+      const proofLength = proofPath.getTotalLength();
+      proofPath.style.strokeDasharray = `${proofLength}`;
+      proofPath.style.strokeDashoffset = `${proofLength}`;
+      tl.to(proofPath, { strokeDashoffset: 0, duration: 0.56, ease: "power2.out" }, 12.44);
+      tl.to(progressFill, { scaleX: 1, duration: 14.4, ease: "none" }, 0);
+
+      window.__timelines["04-bounded-ai"] = tl;
+    })();
+  </script>
+</template>

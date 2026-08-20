@@ -1,0 +1,98 @@
+{"kind":"deck","id":"pr/m8vvt3","name":"Deck"}
+{"kind":"layout","layoutId":"5e0be780-04b3-4693-bdc7-5215b4f500b4","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"bfb617cb-a319-43fa-9584-4c29b7fcda76","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/zqjqdo","slide":1,"title":"01","textShapes":5}
+{"kind":"textbox","id":"sh/18b2pwzi","slide":1,"name":"Google-Shape-532-p58-2","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/e50ju107","slide":1,"name":"Google-Shape-533-p58-3","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/f6tknmhc","slide":1,"name":"Picture-3-4-backing","bbox":[658.17,41.62,581.6,588.14]}
+{"kind":"shape","id":"sh/pwb2tgzu","slide":1,"name":"Google-Shape-534-p58-5","bbox":[41.33,213.33,581.33,416]}
+{"kind":"textbox","id":"sh/nutkr6ho","slide":1,"text":"VERICATALOG PROOF","textPreview":"VERICATALOG PROOF","textChars":17,"textLines":1,"bbox":[42,52,540,34]}
+{"kind":"textbox","id":"sh/czml4by5","slide":1,"text":"Every catalog field\nneeds proof.","textPreview":"Every catalog field | needs proof.","textChars":32,"textLines":2,"bbox":[42,142,560,150]}
+{"kind":"textbox","id":"sh/x0v2xgzq","slide":1,"text":"Evidence-first product intelligence for industrial commerce.\n\nA functional local prototype for industrial valves & fittings.","textPreview":"Evidence-first product intelligence for industrial commerce. |  | A functional local prototype for industrial valves & fittings.","textChars":124,"textLines":3,"bbox":[42,350,540,155]}
+{"kind":"textbox","id":"sh/5k76hcj6","slide":1,"text":"UniHack 2026 • Synthetic demonstration data","textPreview":"UniHack 2026 • Synthetic demonstration data","textChars":43,"textLines":1,"bbox":[42,570,520,34]}
+{"kind":"image","id":"im/5c765sj6","slide":1,"name":"Picture-3-4","geometry":"roundRect","alt":"hero placeholder for Picture 3","prompt":"Clean editorial light-blue conceptual image with subtle architectural geometry, ample white space, and no embedded text","isPlaceholder":true,"bbox":[658.17,41.62,581.6,588.14]}
+{"kind":"image","id":"im/japo3i10","slide":1,"name":"","geometry":"roundRect","alt":"VeriCatalog Proof local app showing an evidence-backed ball valve record","bbox":[658,42,582,588]}
+{"kind":"notes","id":"nt/zqjqdo","slide":1,"text":"Open with the problem: industrial specs cannot be exported safely when their origin is unclear.\n[Sources] Local project screenshot and README, verified 2026-08-20."}
+{"kind":"slide","id":"sl/2in4w6","slide":2,"title":"02","textShapes":3}
+{"kind":"textbox","id":"sh/cv65wza9","slide":2,"name":"Google-Shape-532-p58-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/budonu94","slide":2,"name":"Google-Shape-533-p58-3","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/at4nupsj","slide":2,"name":"Content-Placeholder-15-4","bbox":[42.09,111.02,1197.33,106.27]}
+{"kind":"shape","id":"sh/orm5szad","slide":2,"bbox":[36,226,1210,430]}
+{"kind":"textbox","id":"sh/nqdoju9s","slide":2,"text":"Industrial catalog data breaks down when proof is separated from the value.","textPreview":"Industrial catalog data breaks down when proof is separated from the value.","textChars":75,"textLines":1,"bbox":[42,42,1160,106]}
+{"kind":"textbox","id":"sh/2p4nqps7","slide":2,"text":"A source file can contain the right information while still being unsafe to export unless each field is traceable, normalized, and reviewable.","textPreview":"A source file can contain the right information while still being unsafe to export unless each field is traceable, normalized, and review...","textChars":142,"textLines":1,"bbox":[42,160,1130,58]}
+{"kind":"table","id":"tb/0ju5gjy1","slide":2,"name":"Google-Shape-644-p93-5","rows":9,"cols":5,"preview":"Column Label | Column Label | Column Label | Column Label | Column Label","bbox":[41.33,236.33,1197.33,412.87]}
+{"kind":"table","id":"tb/4feps3y5","slide":2,"name":"","rows":5,"cols":5,"preview":"Source reality | Example | Why it is risky | What a steward needs | VeriCatalog response","bbox":[41,244,1197,372]}
+{"kind":"notes","id":"nt/2in4w6","slide":2,"text":"This slide states workflow risks qualitatively and does not claim a measured business impact.\n[Sources] Product requirements, README, and synthetic conflict fixture in backend/demo_data, verified 2026-08-20."}
+{"kind":"slide","id":"sl/r0xt7p","slide":3,"title":"03","textShapes":9}
+{"kind":"shape","id":"sh/583m9sbq","slide":3,"name":"Rounded-Rectangle-5-1","bbox":[41.33,317.33,374.67,312]}
+{"kind":"shape","id":"sh/i5cnydsf","slide":3,"name":"Rounded-Rectangle-6-2","bbox":[452.67,317.33,374.67,312]}
+{"kind":"shape","id":"sh/j6l47it0","slide":3,"name":"Rounded-Rectangle-7-3","bbox":[864.28,317.33,374.67,312]}
+{"kind":"textbox","id":"sh/w3a5wna9","slide":3,"name":"Slide-Number-Placeholder-1-4","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/x4jm58bu","slide":3,"name":"Title-2-5","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/ahsnuds3","slide":3,"name":"Content-Placeholder-9-6","bbox":[73.74,514.5,309.67,86]}
+{"kind":"shape","id":"sh/v2143ito","slide":3,"name":"Content-Placeholder-10-7","bbox":[896.78,514.5,309.67,86]}
+{"kind":"shape","id":"sh/gze587ad","slide":3,"name":"Content-Placeholder-11-8","bbox":[485.17,514.5,309.67,86]}
+{"kind":"shape","id":"sh/10n6hcry","slide":3,"name":"Content-Placeholder-9-9","bbox":[73.74,360,308.67,142.71]}
+{"kind":"shape","id":"sh/hgzitgn2","slide":3,"name":"Content-Placeholder-9-10","bbox":[484.3,360,308.67,142.71]}
+{"kind":"shape","id":"sh/gfqhkb6h","slide":3,"name":"Content-Placeholder-9-11","bbox":[898.94,360,308.67,142.71]}
+{"kind":"shape","id":"sh/fuh0r65w","slide":3,"name":"Content-Placeholder-15-12","bbox":[41.33,119.51,1197.33,167.92]}
+{"kind":"textbox","id":"sh/ut8zi1or","slide":3,"text":"VeriCatalog Proof is a trust layer before the PIM.","textPreview":"VeriCatalog Proof is a trust layer before the PIM.","textChars":50,"textLines":1,"bbox":[42,42,1140,58]}
+{"kind":"textbox","id":"sh/tszipg76","slide":3,"text":"It turns source documents into structured records while preserving the proof needed to decide what can move forward.","textPreview":"It turns source documents into structured records while preserving the proof needed to decide what can move forward.","textChars":116,"textLines":1,"bbox":[42,122,1120,56]}
+{"kind":"textbox","id":"sh/sr6hgb6l","slide":3,"text":"Evidence","textPreview":"Evidence","textChars":8,"textLines":1,"bbox":[74,382,300,92]}
+{"kind":"textbox","id":"sh/7qxgn6p0","slide":3,"text":"Source file, location, snippet, raw value, and extraction method stay attached to the field.","textPreview":"Source file, location, snippet, raw value, and extraction method stay attached to the field.","textChars":92,"textLines":1,"bbox":[74,515,300,74]}
+{"kind":"textbox","id":"sh/6poze1of","slide":3,"text":"Rules","textPreview":"Rules","textChars":5,"textLines":1,"bbox":[485,382,300,92]}
+{"kind":"textbox","id":"sh/doji10na","slide":3,"text":"Units and aliases are normalized deterministically; missing, duplicate, and conflicting values are flagged.","textPreview":"Units and aliases are normalized deterministically; missing, duplicate, and conflicting values are flagged.","textChars":107,"textLines":1,"bbox":[485,515,300,74]}
+{"kind":"textbox","id":"sh/cnahsv6p","slide":3,"text":"Review","textPreview":"Review","textChars":6,"textLines":1,"bbox":[897,382,300,92]}
+{"kind":"textbox","id":"sh/wri14je1","slide":3,"text":"A bounded local agent ranks exceptions; a steward remains the only one who can approve, reject, or edit a field.","textPreview":"A bounded local agent ranks exceptions; a steward remains the only one who can approve, reject, or edit a field.","textChars":112,"textLines":1,"bbox":[897,515,300,74]}
+{"kind":"notes","id":"nt/r0xt7p","slide":3,"text":"The core proposition is not an AI answer. It is an auditable decision workflow.\n[Sources] README; docs/01-product-requirements.md; docs/05-data-schema-and-validation.md; local implementation, verified 2026-08-20."}
+{"kind":"slide","id":"sl/13m3ci","slide":4,"title":"04","textShapes":3}
+{"kind":"textbox","id":"sh/m1o7uhsr","slide":4,"name":"Google-Shape-532-p58-2","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/9ofq5wri","slide":4,"name":"Google-Shape-533-p58-3","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/8n6pwrax","slide":4,"name":"Content-Placeholder-15-4","bbox":[42.09,111.02,1197.33,106.27]}
+{"kind":"shape","id":"sh/yx47qhsv","slide":4,"bbox":[36,226,1210,430]}
+{"kind":"textbox","id":"sh/l0fq1cr6","slide":4,"text":"A record explains itself field by field.","textPreview":"A record explains itself field by field.","textChars":40,"textLines":1,"bbox":[42,42,1000,60]}
+{"kind":"textbox","id":"sh/kzmpsral","slide":4,"text":"Synthetic ball-valve example processed locally: the source text is preserved beside the canonical PIM-ready value and validation result.","textPreview":"Synthetic ball-valve example processed locally: the source text is preserved beside the canonical PIM-ready value and validation result.","textChars":136,"textLines":1,"bbox":[42,118,1130,62]}
+{"kind":"table","id":"tb/at8zipkv","slide":4,"name":"Google-Shape-644-p93-5","rows":9,"cols":5,"preview":"Column Label | Column Label | Column Label | Column Label | Column Label","bbox":[41.33,236.33,1197.33,412.87]}
+{"kind":"table","id":"tb/mpoze5kz","slide":4,"name":"","rows":5,"cols":5,"preview":"Attribute | Raw source text | Canonical value | Validation explanation | Truth status","bbox":[41,244,1197,372]}
+{"kind":"notes","id":"nt/13m3ci","slide":4,"text":"Point to Size: the app shows both 25.4 mm and 1 in, so normalization never erases the original evidence.\n[Sources] Synthetic ball-valve PDF and local app record, verified 2026-08-20. All displayed source values are fabricated demo data."}
+{"kind":"slide","id":"sl/39tgqq","slide":5,"title":"05","textShapes":3}
+{"kind":"textbox","id":"sh/ne503ahk","slide":5,"name":"Google-Shape-532-p58-2","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/ofyhcfi5","slide":5,"name":"Google-Shape-533-p58-3","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/pg7i5kzq","slide":5,"name":"Content-Placeholder-15-4","bbox":[42.09,111.02,1197.33,106.27]}
+{"kind":"shape","id":"sh/fq50zqho","slide":5,"bbox":[36,226,1210,430]}
+{"kind":"textbox","id":"sh/greh8vi9","slide":5,"text":"A short, evidence-first path from supplier file to PIM export.","textPreview":"A short, evidence-first path from supplier file to PIM export.","textChars":62,"textLines":1,"bbox":[42,42,1160,106]}
+{"kind":"textbox","id":"sh/1sni10zu","slide":5,"text":"The optional AI mapper needs source quotes. The bounded Review Agent only ranks human work; it never changes a value.","textPreview":"The optional AI mapper needs source quotes. The bounded Review Agent only ranks human work; it never changes a value.","textChars":117,"textLines":1,"bbox":[42,160,1120,58]}
+{"kind":"table","id":"tb/jm9svit4","slide":5,"name":"Google-Shape-644-p93-5","rows":9,"cols":5,"preview":"Column Label | Column Label | Column Label | Column Label | Column Label","bbox":[41.33,236.33,1197.33,412.87]}
+{"kind":"table","id":"tb/z65sjetk","slide":5,"name":"","rows":6,"cols":5,"preview":"Step | Input | System action | Decision evidence | Output","bbox":[41,244,1197,372]}
+{"kind":"notes","id":"nt/39tgqq","slide":5,"text":"If an AI key is added, it stays on the backend. AI-only candidates remain Inferred until reviewed.\nThe Evidence Review Agent is a fixed sequence of inspect-only local tools. It can rank the queue but cannot mutate a record.\n[Sources] docs/06-system-architecture.md and backend implementation, verified 2026-08-20."}
+{"kind":"slide","id":"sl/nn6qc4","slide":6,"title":"06","textShapes":10}
+{"kind":"shape","id":"sh/sfihsvy9","slide":6,"name":"Rounded-Rectangle-5-1","bbox":[41.33,317.33,374.67,312]}
+{"kind":"shape","id":"sh/re9gzqho","slide":6,"name":"Rounded-Rectangle-6-2","bbox":[452.67,317.33,374.67,312]}
+{"kind":"shape","id":"sh/qd0zqlg3","slide":6,"name":"Rounded-Rectangle-7-3","bbox":[864.28,317.33,374.67,312]}
+{"kind":"textbox","id":"sh/5cryxgzi","slide":6,"name":"Slide-Number-Placeholder-1-4","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"shape","id":"sh/4bihovyx","slide":6,"name":"Title-2-5","bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/3qpgvqhc","slide":6,"name":"Content-Placeholder-9-6","bbox":[73.74,514.5,309.67,86]}
+{"kind":"shape","id":"sh/ipgzmlg7","slide":6,"name":"Content-Placeholder-10-7","bbox":[896.78,514.5,309.67,86]}
+{"kind":"shape","id":"sh/p8bi9kz2","slide":6,"name":"Content-Placeholder-11-8","bbox":[485.17,514.5,309.67,86]}
+{"kind":"shape","id":"sh/o72h0fyh","slide":6,"name":"Content-Placeholder-9-9","bbox":[73.74,360,308.67,142.71]}
+{"kind":"shape","id":"sh/m5gje50f","slide":6,"name":"Content-Placeholder-9-10","bbox":[484.3,360,308.67,142.71]}
+{"kind":"shape","id":"sh/n6pk7a10","slide":6,"name":"Content-Placeholder-9-11","bbox":[898.94,360,308.67,142.71]}
+{"kind":"shape","id":"sh/87y1gfil","slide":6,"name":"Content-Placeholder-15-12","bbox":[41.33,119.51,1197.33,167.92]}
+{"kind":"textbox","id":"sh/98729kj6","slide":6,"text":"Batch health makes the next review decision visible.","textPreview":"Batch health makes the next review decision visible.","textChars":52,"textLines":1,"bbox":[42,42,1140,60]}
+{"kind":"textbox","id":"sh/y1wja50j","slide":6,"text":"The shipped synthetic batch confirms the app can calculate a review queue. These are properties of this demo batch—not real-world performance claims.","textPreview":"The shipped synthetic batch confirms the app can calculate a review queue. These are properties of this demo batch—not real-world perform...","textChars":149,"textLines":1,"bbox":[42,122,1120,56]}
+{"kind":"textbox","id":"sh/z25k3q1o","slide":6,"text":"60","textPreview":"60","textChars":2,"textLines":1,"bbox":[74,382,300,92]}
+{"kind":"textbox","id":"sh/03e1cvi9","slide":6,"text":"synthetic rows processed locally","textPreview":"synthetic rows processed locally","textChars":32,"textLines":1,"bbox":[74,515,300,74]}
+{"kind":"textbox","id":"sh/l47250ju","slide":6,"text":"93.3%","textPreview":"93.3%","textChars":5,"textLines":1,"bbox":[485,382,300,92]}
+{"kind":"textbox","id":"sh/ix03mp0n","slide":6,"text":"required field instances marked Verified","textPreview":"required field instances marked Verified","textChars":40,"textLines":1,"bbox":[485,515,300,74]}
+{"kind":"textbox","id":"sh/jy9kfu18","slide":6,"text":"28","textPreview":"28","textChars":2,"textLines":1,"bbox":[897,382,300,92]}
+{"kind":"textbox","id":"sh/fi1g7mhk","slide":6,"text":"fields needing review: inferred, missing, or conflict","textPreview":"fields needing review: inferred, missing, or conflict","textChars":53,"textLines":1,"bbox":[897,515,300,74]}
+{"kind":"textbox","id":"sh/ehszehgz","slide":6,"text":"Also observed: 1 conflict • 15 missing mandatory fields • 1 duplicate candidate","textPreview":"Also observed: 1 conflict • 15 missing mandatory fields • 1 duplicate candidate","textChars":79,"textLines":1,"bbox":[74,628,1050,28]}
+{"kind":"notes","id":"nt/nn6qc4","slide":6,"text":"Completeness counts only required field instances marked Verified. It is not an accuracy estimate.\n[Sources] Local run of backend/demo_data/synthetic_valve_batch.csv and Catalog Health UI, verified 2026-08-20. All data is synthetic."}
+{"kind":"slide","id":"sl/91iru3","slide":7,"title":"VERICATALOG PROOF","textShapes":3}
+{"kind":"shape","id":"sh/lonelsfu","slide":7,"name":"Title-3-1","bbox":[41.33,182.55,992,261.57]}
+{"kind":"shape","id":"sh/ylwfaxgj","slide":7,"name":"Subtitle-4-2","bbox":[41.33,522.13,374.67,113.41]}
+{"kind":"shape","id":"sh/zm5wj2x4","slide":7,"name":"Subtitle-4-3","bbox":[41.33,41.18,169.33,68.15]}
+{"kind":"textbox","id":"sh/cjux8nyd","slide":7,"text":"VERICATALOG PROOF","textPreview":"VERICATALOG PROOF","textChars":17,"textLines":1,"bbox":[42,52,410,30]}
+{"kind":"textbox","id":"sh/dknehsfy","slide":7,"text":"Ready for a human-reviewed\nPIM handoff.","textPreview":"Ready for a human-reviewed | PIM handoff.","textChars":39,"textLines":2,"bbox":[42,170,1060,190]}
+{"kind":"textbox","id":"sh/qhcf6dg7","slide":7,"text":"Functional local prototype\nEvidence-first review before export\nSynthetic demo; no real-world accuracy claim","textPreview":"Functional local prototype | Evidence-first review before export | Synthetic demo; no real-world accuracy claim","textChars":107,"textLines":3,"bbox":[42,528,680,108]}
+{"kind":"notes","id":"nt/91iru3","slide":7,"text":"Close with the decision: this project is ready to demonstrate, configure with an optional key, and submit with a repository link.\n[Sources] README, docs/SUBMISSION_DESCRIPTION.md, and local implementation, verified 2026-08-20."}

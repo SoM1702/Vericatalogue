@@ -1,0 +1,351 @@
+<template>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    #root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      color: #092833;
+      font-family: sans-serif;
+    }
+
+    [class~="health06-ground"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    [class~="health06-screen"] {
+      position: absolute;
+      inset: -2%;
+      width: 104%;
+      height: 104%;
+      object-fit: cover;
+      filter: saturate(0.88) contrast(0.97);
+    }
+
+    [class~="health06-screen-wash"] {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    [class~="health06-content"] {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    [class~="health06-opening-card"],
+    [class~="health06-title-card"],
+    [class~="health06-evidence-card"],
+    [class~="health06-final-card"] {
+      position: absolute;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      transform-origin: 50% 50%;
+    }
+
+    [class~="health06-opening-card"] {
+      left: 5cqw;
+      top: 7.1cqh;
+      width: 52cqw;
+      height: 48cqh;
+      padding: 4.1cqw 3.2cqw;
+    }
+
+    [class~="health06-title-card"] {
+      left: 5cqw;
+      top: 7.1cqh;
+      width: 52cqw;
+      height: 48cqh;
+      padding: 4.1cqw 3.2cqw;
+      z-index: 2;
+    }
+
+    [class~="health06-accent-line"] {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #b96c00;
+    }
+
+    [class~="health06-eyebrow"] {
+      margin: 1.3cqh 0 0;
+      color: #b96c00;
+      font-size: 1.05cqw;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+
+    [class~="health06-title"] {
+      max-width: 45cqw;
+      margin: 2.6cqh 0 0;
+      color: #092833;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    [class~="health06-status-row"] {
+      display: flex;
+      gap: 1cqw;
+      margin-top: 4.2cqh;
+    }
+
+    [class~="health06-chip"] {
+      display: inline-flex;
+      align-items: center;
+      min-height: 4.7cqh;
+      padding: 0 1.3cqw;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 100px;
+      background: rgba(185, 108, 0, 0.08);
+      color: #092833;
+      font-size: 1.35cqw;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    [class~="health06-chip-verified"] {
+      color: #092833;
+    }
+
+    [class~="health06-chip-inferred"] {
+      color: #b96c00;
+    }
+
+    [class~="health06-chip-conflict"] {
+      color: #dc2626;
+    }
+
+    [class~="health06-evidence-card"] {
+      left: 50%;
+      top: 24.6cqh;
+      width: 58cqw;
+      min-height: 33cqh;
+      margin-left: -29cqw;
+      padding: 4.3cqw;
+      z-index: 3;
+    }
+
+    [class~="health06-evidence-copy"] {
+      max-width: 47cqw;
+      margin: 2.8cqh 0 0;
+      color: #092833;
+      font-size: 3.1cqw;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.12;
+    }
+
+    [class~="health06-closing-rings"] {
+      position: absolute;
+      left: 50%;
+      top: 44.5cqh;
+      z-index: 1;
+      width: 44cqw;
+      height: 44cqw;
+      pointer-events: none;
+    }
+
+    [class~="health06-ring"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border: 1px solid rgba(185, 108, 0, 0.16);
+      border-radius: 50%;
+    }
+
+    [class~="health06-ring-a"] {
+      width: 20cqw;
+      height: 20cqw;
+      margin: -10cqw 0 0 -10cqw;
+    }
+
+    [class~="health06-ring-b"] {
+      width: 31cqw;
+      height: 31cqw;
+      margin: -15.5cqw 0 0 -15.5cqw;
+    }
+
+    [class~="health06-ring-c"] {
+      width: 43cqw;
+      height: 43cqw;
+      margin: -21.5cqw 0 0 -21.5cqw;
+    }
+
+    [class~="health06-final-card"] {
+      left: 50%;
+      top: 25.5cqh;
+      z-index: 4;
+      width: 50cqw;
+      min-height: 34cqh;
+      margin-left: -25cqw;
+      padding: 5.1cqw 4.3cqw 4.5cqw;
+      text-align: center;
+    }
+
+    [class~="health06-final-name"] {
+      margin: 2.8cqh 0 0;
+      color: #092833;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    [class~="health06-final-tagline"] {
+      max-width: 37cqw;
+      margin: 2.2cqh auto 0;
+      color: #0f806f;
+      font-size: 1.55cqw;
+      font-weight: 400;
+      line-height: 1.45;
+    }
+
+    [class~="health06-progress"] {
+      position: absolute;
+      left: 5cqw;
+      bottom: 18.8cqh;
+      z-index: 5;
+      width: 90cqw;
+      height: 3px;
+      background: #b96c00;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-catalog-health" data-start="0" data-duration="19" data-width="1920" data-height="1080" data-layout-allow-overflow>
+    <div class="clip health06-ground" data-start="0" data-duration="19" data-track-index="0">
+      <img class="health06-screen" src="assets/vericatalog-health.png" alt="" />
+      <div class="health06-screen-wash"></div>
+      <div class="health06-closing-rings" aria-hidden="true">
+        <div class="health06-ring health06-ring-a"></div>
+        <div class="health06-ring health06-ring-b"></div>
+        <div class="health06-ring health06-ring-c"></div>
+      </div>
+    </div>
+
+    <div class="health06-content">
+      <section class="health06-opening-card" id="health06-opening-card" aria-label="Catalog Health">
+        <div class="health06-accent-line"></div>
+        <p class="health06-eyebrow">CATALOG HEALTH</p>
+      </section>
+
+      <section class="health06-title-card" id="health06-title-card">
+        <div class="health06-accent-line"></div>
+        <p class="health06-eyebrow">CATALOG HEALTH</p>
+        <h1 class="health06-title">Focus human attention</h1>
+        <div class="health06-status-row" aria-label="Evidence states">
+          <span class="health06-chip health06-chip-verified" id="health06-chip-verified">Verified</span>
+          <span class="health06-chip health06-chip-inferred" id="health06-chip-inferred">Inferred</span>
+          <span class="health06-chip health06-chip-conflict" id="health06-chip-conflict">Conflict</span>
+        </div>
+      </section>
+
+      <section class="health06-evidence-card" id="health06-evidence-card">
+        <div class="health06-accent-line"></div>
+        <p class="health06-evidence-copy">where evidence is missing or sources disagree</p>
+      </section>
+
+      <section class="health06-final-card" id="health06-final-card">
+        <div class="health06-accent-line" style="margin: 0 auto;"></div>
+        <h2 class="health06-final-name">VeriCatalog Proof</h2>
+        <p class="health06-final-tagline">Auditable product intelligence before PIM export</p>
+      </section>
+
+      <div class="health06-progress" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines = window.__timelines || {};
+    window.__timelines["06-catalog-health"] = tl;
+
+    const openingCard = document.getElementById("health06-opening-card");
+    const titleCard = document.getElementById("health06-title-card");
+    const evidenceCard = document.getElementById("health06-evidence-card");
+    const finalCard = document.getElementById("health06-final-card");
+    const chips = [
+      document.getElementById("health06-chip-verified"),
+      document.getElementById("health06-chip-inferred"),
+      document.getElementById("health06-chip-conflict"),
+    ];
+    gsap.set([openingCard, titleCard, evidenceCard, finalCard], { opacity: 0 });
+
+
+    tl.fromTo(
+      openingCard,
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+      0.14,
+    );
+    tl.to(
+      openingCard,
+      { opacity: 0, scale: 0.76, duration: 0.4, ease: "power2.in" },
+      0.82,
+    );
+    tl.fromTo(
+      titleCard,
+      { opacity: 0, y: 24, scale: 0.76 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "back.out(1.4)" },
+      1.06,
+    );
+
+    const STATUS_SEQUENCE = [
+      { t: 0, count: 0 },
+      { t: 5.2, count: 1 },
+      { t: 7.25, count: 2 },
+      { t: 9.55, count: 3 },
+    ];
+    const statusDriver = { t: 0 };
+    function statusCountAt(time) {
+      for (let index = STATUS_SEQUENCE.length - 1; index >= 0; index -= 1) {
+        if (time >= STATUS_SEQUENCE[index].t) return STATUS_SEQUENCE[index].count;
+      }
+      return 0;
+    }
+    function renderStatus(time) {
+      const count = statusCountAt(time);
+      chips.forEach((chip, index) => {
+        chip.style.opacity = index < count ? "1" : "0";
+      });
+    }
+    renderStatus(0);
+    tl.to(
+      statusDriver,
+      {
+        t: 11.49,
+        duration: 11.49,
+        ease: "none",
+        onUpdate: () => renderStatus(statusDriver.t),
+      },
+      0,
+    );
+
+    tl.set([titleCard, ...chips], { opacity: 0 }, 11.5);
+    tl.fromTo(
+      evidenceCard,
+      { opacity: 0, y: 24, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out" },
+      11.56,
+    );
+
+    tl.set(evidenceCard, { opacity: 0 }, 15);
+    tl.set(finalCard, { opacity: 1 }, 15);
+    })();
+  </script>
+</template>

@@ -1,0 +1,26 @@
+# Local presentation build workspace; final deck is kept under submission/.
+.tmp-deck/
+
+# Local application state and credentials
+backend/.env
+backend/data/*.sqlite3
+backend/data/uploads/
+backend/.pytest_cache/
+backend/**/__pycache__/
+
+# Dependency and generated build output
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+videos/*/node_modules/
+videos/*/.hyperframes/frame-packets/
+videos/*/output/
+videos/*/*.mp4
+
+# Local evaluation inputs/results. Authorised sources must never be committed.
+authorised_sources/
+evaluation-output/
+backend/evaluation-output/
+
+# OS metadata
+.DS_Store

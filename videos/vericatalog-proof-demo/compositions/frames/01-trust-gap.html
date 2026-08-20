@@ -1,0 +1,251 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      container-type: size;
+      color: #092833;
+    }
+
+    [data-frame-part="ground"] {
+      position: absolute;
+      inset: 0;
+      background: #FFFFFF;
+    }
+
+    [data-frame-part="content"] {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    [data-frame-part="opening-phrase"],
+    [data-frame-part="token-line"] {
+      position: absolute;
+      top: 34cqh;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      color: #092833;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    [data-frame-part="opening-phrase"] span {
+      display: inline-block;
+      margin-right: 0.22em;
+    }
+
+    [data-frame-part="opening-phrase"] span:last-child {
+      margin-right: 0;
+    }
+
+    [data-frame-part="token-shell"] {
+      display: inline-flex;
+      justify-content: center;
+      min-width: 25cqw;
+      white-space: nowrap;
+    }
+
+    [data-frame-part="proof-rail"] {
+      position: absolute;
+      top: 55.5cqh;
+      left: 50%;
+      width: 18cqw;
+      height: 1px;
+      margin-left: -9cqw;
+      background: rgba(185, 108, 0, 0.2);
+    }
+
+    [data-frame-part="proof-rail"]::before,
+    [data-frame-part="proof-rail"]::after {
+      position: absolute;
+      top: -3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #B96C00;
+      content: "";
+    }
+
+    [data-frame-part="proof-rail"]::before {
+      left: -3px;
+    }
+
+    [data-frame-part="proof-rail"]::after {
+      right: -3px;
+    }
+
+    [data-frame-part="proof-underline"] {
+      position: absolute;
+      top: 51.4cqh;
+      left: 50%;
+      width: 16.5cqw;
+      height: 1.2cqh;
+      margin-left: -8.25cqw;
+      overflow: visible;
+    }
+
+    [data-frame-part="proof-underline"] path {
+      fill: none;
+      stroke: #B96C00;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    [data-frame-part="qualifier"] {
+      position: absolute;
+      top: 60.5cqh;
+      left: 50%;
+      width: 58cqw;
+      margin-left: -29cqw;
+      color: #0F806F;
+      font-size: 1.5cqw;
+      font-weight: 400;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    [data-frame-part="qualifier"] strong {
+      color: #B96C00;
+      font-weight: 700;
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-trust-gap" data-start="0" data-duration="8.4" data-width="1920" data-height="1080" data-layout-allow-overlap>
+    <div class="clip" data-frame-part="ground" data-start="0" data-duration="8.4" data-track-index="0"></div>
+
+    <div class="clip" data-frame-part="content" data-start="0" data-duration="8.4" data-track-index="1">
+      <div data-frame-part="opening-phrase" aria-label="AI can extract">
+        <span id="trust01-word-ai">AI</span>
+        <span id="trust01-word-can">can</span>
+        <span id="trust01-word-extract">extract</span>
+      </div>
+
+      <div id="trust01-token-line" data-frame-part="token-line" aria-live="off">
+        <span data-frame-part="token-shell"><span id="trust01-token">extract</span></span>
+      </div>
+
+      <div id="trust01-proof-rail" data-frame-part="proof-rail" aria-hidden="true"></div>
+
+      <svg data-frame-part="proof-underline" viewBox="0 0 330 13" preserveAspectRatio="none" aria-hidden="true">
+        <path id="trust01-underline-path" d="M 2 7 L 328 7"></path>
+      </svg>
+
+      <div id="trust01-qualifier" data-frame-part="qualifier">
+        only when every field carries <strong>proof</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-trust-gap"] = tl;
+
+      const openingPhrase = document.querySelector('[data-composition-id="01-trust-gap"] [data-frame-part="opening-phrase"]');
+      const tokenLine = document.getElementById("trust01-token-line");
+      const tokenEl = document.getElementById("trust01-token");
+      const proofRail = document.getElementById("trust01-proof-rail");
+      const qualifier = document.getElementById("trust01-qualifier");
+      const underlinePath = document.getElementById("trust01-underline-path");
+      gsap.set([tokenLine, proofRail, qualifier], { autoAlpha: 0 });
+
+      const WORDS = [
+        { id: "trust01-word-ai", text: "AI" },
+        { id: "trust01-word-can", text: "can" },
+        { id: "trust01-word-extract", text: "extract" }
+      ];
+      const WORD_PACE = { start: 0.08, baseDuration: 0.22, secondsPerCharacter: 0.065, gap: 0.14 };
+      let wordCursor = WORD_PACE.start;
+      const WORD_TIMELINE = WORDS.map((word) => {
+        const duration = WORD_PACE.baseDuration + word.text.length * WORD_PACE.secondsPerCharacter;
+        const entry = { ...word, start: wordCursor, duration };
+        wordCursor += duration + WORD_PACE.gap;
+        return entry;
+      });
+
+      WORD_TIMELINE.forEach((entry) => {
+        tl.fromTo(
+          `#${entry.id}`,
+          { autoAlpha: 0, y: 24 },
+          { autoAlpha: 1, y: 0, duration: entry.duration, ease: "power2.out" },
+          entry.start
+        );
+      });
+
+      tl.set(openingPhrase, { autoAlpha: 0 }, 2);
+      tl.fromTo(
+        tokenLine,
+        { autoAlpha: 0, y: 18 },
+        { autoAlpha: 1, y: 0, duration: 0.28, ease: "power2.out" },
+        2
+      );
+      tl.fromTo(
+        proofRail,
+        { autoAlpha: 0, scaleX: 0.72 },
+        { autoAlpha: 1, scaleX: 1, duration: 0.45, ease: "power1.out" },
+        2.28
+      );
+
+      const TOKEN_SEQUENCE = [
+        { t: 0, token: "extract" },
+        { t: 1.18, token: "structure" },
+        { t: 2.45, token: "trust" }
+      ];
+      function tokenAt(time) {
+        for (let index = TOKEN_SEQUENCE.length - 1; index >= 0; index -= 1) {
+          if (time >= TOKEN_SEQUENCE[index].t) return TOKEN_SEQUENCE[index].token;
+        }
+        return TOKEN_SEQUENCE[0].token;
+      }
+
+      let lastToken = "";
+      function renderToken(token) {
+        if (token !== lastToken) {
+          tokenEl.textContent = token;
+          lastToken = token;
+        }
+      }
+      renderToken(tokenAt(0));
+
+      const tokenDriver = { t: 0 };
+      tl.to(
+        tokenDriver,
+        {
+          t: 3.3,
+          duration: 3.3,
+          ease: "none",
+          onUpdate: () => renderToken(tokenAt(tokenDriver.t))
+        },
+        2
+      );
+
+      const underlineLength = underlinePath.getTotalLength();
+      underlinePath.style.strokeDasharray = `${underlineLength}`;
+      underlinePath.style.strokeDashoffset = `${underlineLength}`;
+      tl.to(
+        underlinePath,
+        { strokeDashoffset: 0, duration: 0.65, ease: "power2.out" },
+        5.3
+      );
+      tl.fromTo(
+        qualifier,
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.72, ease: "power1.out" },
+        6.12
+      );
+    })();
+  </script>
+</template>

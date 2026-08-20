@@ -1,0 +1,5 @@
+case_id,source_path,record_index,field,expected_value,expected_status
+supplier-001,../authorised_sources/example_catalog.pdf,0,manufacturer,Example Manufacturer Ltd.,verified
+supplier-001,../authorised_sources/example_catalog.pdf,0,manufacturer_part_number,EX-100,verified
+supplier-001,../authorised_sources/example_catalog.pdf,0,pressure_rating,600 WOG,verified
+supplier-001,../authorised_sources/example_catalog.pdf,0,certifications,,missing

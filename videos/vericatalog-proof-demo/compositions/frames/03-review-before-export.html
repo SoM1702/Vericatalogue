@@ -1,0 +1,607 @@
+<template>
+  <style>
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #092833;
+      font-family: sans-serif;
+    }
+
+    .review03-ground,
+    .review03-stage {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .review03-ground {
+      background: #ffffff;
+    }
+
+    .review03-stage {
+      overflow: hidden;
+    }
+
+    .review03-world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 290cqw;
+      height: 100cqh;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+
+    .review03-kicker,
+    .review03-eyebrow,
+    .review03-source-label,
+    .review03-card-label,
+    .review03-mini-step {
+      color: #9b5a00;
+      font-size: 0.8cqw;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .review03-kicker {
+      position: absolute;
+      top: 5cqh;
+      left: 5cqw;
+    }
+
+    .review03-progress {
+      position: absolute;
+      top: 81.2cqh;
+      left: 5cqw;
+      width: 42cqw;
+      height: 3px;
+      border-radius: 0;
+      background: #b96c00;
+    }
+
+    .review03-connector {
+      position: absolute;
+      top: 67cqh;
+      left: 13cqw;
+      width: 245cqw;
+      height: 3px;
+      border-radius: 6px;
+      background: rgba(185, 108, 0, 0.15);
+    }
+
+    .review03-connector::before,
+    .review03-connector::after {
+      position: absolute;
+      top: -5px;
+      width: 13px;
+      height: 13px;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      background: #b96c00;
+      content: "";
+    }
+
+    .review03-connector::before {
+      left: 13cqw;
+    }
+
+    .review03-connector::after {
+      left: 165cqw;
+    }
+
+    .review03-station {
+      position: absolute;
+      box-sizing: border-box;
+    }
+
+    .review03-station-one {
+      top: 17cqh;
+      left: 8cqw;
+      width: 82cqw;
+      height: 55cqh;
+    }
+
+    .review03-station-two {
+      top: 17cqh;
+      left: 92cqw;
+      width: 60cqw;
+      height: 55cqh;
+    }
+
+    .review03-station-three {
+      top: 15cqh;
+      left: 169cqw;
+      width: 66cqw;
+      height: 67cqh;
+    }
+
+    .review03-station-number {
+      display: grid;
+      width: 2.9cqw;
+      height: 2.9cqw;
+      place-items: center;
+      border-radius: 50%;
+      background: #b96c00;
+      color: #ffffff;
+      font-size: 1.1cqw;
+      font-weight: 700;
+    }
+
+    .review03-station-title {
+      max-width: 34cqw;
+      margin-top: 1.5cqh;
+      color: #092833;
+      font-size: 4.2cqw;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    .review03-station-subtitle {
+      max-width: 29cqw;
+      margin-top: 1.5cqh;
+      color: #0f806f;
+      font-size: 1.4cqw;
+      font-weight: 400;
+      line-height: 1.45;
+    }
+
+    .review03-evidence {
+      position: absolute;
+      top: 0;
+      left: 33cqw;
+      box-sizing: border-box;
+      width: 51cqw;
+      padding: 1cqw;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+    }
+
+    .review03-source-label {
+      margin-bottom: 0.7cqh;
+    }
+
+    .review03-evidence-crop {
+      position: relative;
+      width: 100%;
+      height: 37cqh;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #f5f7f6;
+    }
+
+    .review03-evidence-crop img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .review03-evidence-note {
+      margin-top: 0.9cqh;
+      color: #0f806f;
+      font-size: 1.1cqw;
+      font-weight: 400;
+      line-height: 1.35;
+    }
+
+    .review03-validate-card {
+      position: absolute;
+      top: 23cqh;
+      left: 10cqw;
+      box-sizing: border-box;
+      width: 45cqw;
+      min-height: 24cqh;
+      padding: 1.6cqw;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+    }
+
+    .review03-validate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2cqw;
+      padding: 1.2cqh 0;
+      border-top: 1px solid rgba(185, 108, 0, 0.15);
+    }
+
+    .review03-validate-row:first-of-type {
+      margin-top: 0.8cqh;
+    }
+
+    .review03-validate-key {
+      color: #0f806f;
+      font-size: 1.35cqw;
+      font-weight: 400;
+    }
+
+    .review03-validate-value {
+      color: #092833;
+      font-size: 1.6cqw;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .review03-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5cqw;
+      color: #9b5a00;
+      font-size: 1.05cqw;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .review03-check::before {
+      display: inline-grid;
+      width: 1.1cqw;
+      height: 1.1cqw;
+      place-items: center;
+      border-radius: 50%;
+      background: #b96c00;
+      color: #ffffff;
+      content: "✓";
+      font-size: 0.7cqw;
+      font-weight: 700;
+    }
+
+    .review03-burst-wrap {
+      position: absolute;
+      top: 18cqh;
+      left: -2cqw;
+      width: 55cqw;
+      height: 42cqh;
+    }
+
+    .review03-burst-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      box-sizing: border-box;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 14px;
+      background: rgba(185, 108, 0, 0.04);
+      will-change: transform, opacity;
+    }
+
+    .review03-evidence-chip {
+      width: 15.5cqw;
+      padding: 1.05cqw;
+    }
+
+    .review03-evidence-chip strong,
+    .review03-reviewer-chip strong {
+      display: block;
+      margin-top: 0.55cqh;
+      color: #092833;
+      font-size: 1.35cqw;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .review03-evidence-chip span,
+    .review03-reviewer-chip span {
+      display: block;
+      margin-top: 0.35cqh;
+      color: #0f806f;
+      font-size: 1.05cqw;
+      line-height: 1.35;
+    }
+
+    .review03-decision-card {
+      width: 25cqw;
+      padding: 1.5cqw;
+      border-left: 4px solid #b96c00;
+      border-radius: 12px;
+    }
+
+    .review03-decision-word {
+      margin-top: 0.65cqh;
+      color: #092833;
+      font-size: 2.6cqw;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    .review03-decision-copy {
+      margin-top: 0.75cqh;
+      color: #0f806f;
+      font-size: 1.2cqw;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .review03-reviewer-chip {
+      width: 14.8cqw;
+      padding: 1.05cqw;
+    }
+
+    .review03-export-lock {
+      position: absolute;
+      top: 58cqh;
+      left: 1cqw;
+      display: flex;
+      align-items: center;
+      gap: 1cqw;
+      box-sizing: border-box;
+      width: 49cqw;
+      min-height: 7.5cqh;
+      padding: 1cqw 1.4cqw;
+      border: 1.5px solid rgba(185, 108, 0, 0.2);
+      border-radius: 100px;
+      background: #ffffff;
+    }
+
+    .review03-lock-mark {
+      display: grid;
+      width: 2.7cqw;
+      height: 2.7cqw;
+      place-items: center;
+      border-radius: 50%;
+      background: #b96c00;
+      color: #ffffff;
+      font-size: 1.3cqw;
+      font-weight: 700;
+    }
+
+    .review03-export-copy {
+      display: grid;
+      gap: 0.25cqh;
+    }
+
+    .review03-export-title {
+      color: #092833;
+      font-size: 1.75cqw;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .review03-export-subtitle {
+      color: #0f806f;
+      font-size: 1.05cqw;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .review03-mini-path {
+      display: flex;
+      align-items: center;
+      gap: 0.55cqw;
+      margin-left: auto;
+      color: #0f806f;
+      font-size: 0.9cqw;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .review03-mini-path i {
+      width: 0.42cqw;
+      height: 0.42cqw;
+      border-radius: 50%;
+      background: #b96c00;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="03-review-before-export"
+    data-start="0"
+    data-duration="16.5"
+    data-width="1920"
+    data-height="1080"
+    data-layout-allow-overflow
+  >
+    <div
+      id="review03-ground"
+      class="clip review03-ground"
+      data-start="0"
+      data-duration="16.5"
+      data-track-index="0"
+    ></div>
+
+    <div
+      id="review03-stage"
+      class="clip review03-stage"
+      data-start="0"
+      data-duration="16.5"
+      data-track-index="1"
+    >
+      <div class="review03-world" data-layout-allow-overflow>
+        <div class="review03-kicker">RECORD CONTROL</div>
+        <div class="review03-progress"></div>
+        <div class="review03-connector"></div>
+
+        <section class="review03-station review03-station-one">
+          <div class="review03-normalize-enter">
+            <div class="review03-eyebrow">Step 01</div>
+            <div class="review03-station-number">1</div>
+            <div class="review03-station-title">Normalize</div>
+            <div class="review03-station-subtitle">One shared unit</div>
+          </div>
+
+          <div id="review03-evidence" class="review03-evidence">
+            <div class="review03-source-label">Source evidence</div>
+            <div class="review03-evidence-crop">
+              <img src="assets/vericatalog-proof-demo.png" alt="" />
+            </div>
+            <div class="review03-evidence-note">Captured record · retained with the field</div>
+          </div>
+        </section>
+
+        <section class="review03-station review03-station-two">
+          <div id="review03-validate-title" class="review03-validate-enter">
+            <div class="review03-eyebrow">Step 02</div>
+            <div class="review03-station-number">2</div>
+            <div class="review03-station-title">Validate</div>
+          </div>
+
+          <div id="review03-validate-card" class="review03-validate-card review03-validate-enter">
+            <div class="review03-card-label">Evidence checks</div>
+            <div class="review03-validate-row">
+              <span class="review03-validate-key">Unit conversion</span>
+              <span class="review03-validate-value">1 in → 25.4 mm</span>
+            </div>
+            <div class="review03-validate-row">
+              <span class="review03-validate-key">Conflict check</span>
+              <span class="review03-check">Source match</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="review03-station review03-station-three">
+          <div id="review03-review-title" class="review03-review-enter">
+            <div class="review03-eyebrow">Step 03</div>
+            <div class="review03-station-number">3</div>
+            <div class="review03-station-title">Human review</div>
+          </div>
+
+          <div id="review03-burst" class="review03-burst-wrap">
+            <div class="review03-burst-item review03-evidence-chip" data-target-x="-345" data-target-y="-142">
+              <div class="review03-card-label">Evidence</div>
+              <strong>Source retained</strong>
+              <span>Inspectable record</span>
+            </div>
+            <div class="review03-burst-item review03-decision-card" data-target-x="172" data-target-y="-38">
+              <div class="review03-card-label">Decision gate</div>
+              <div class="review03-decision-word">Review required</div>
+              <div class="review03-decision-copy">Named decision</div>
+            </div>
+            <div class="review03-burst-item review03-reviewer-chip" data-target-x="-205" data-target-y="186">
+              <div class="review03-card-label">Owner</div>
+              <strong>Human reviewer</strong>
+              <span>Exception queue</span>
+            </div>
+          </div>
+
+          <div id="review03-lock" class="review03-export-lock">
+            <div class="review03-lock-mark">✓</div>
+            <div class="review03-export-copy">
+              <div class="review03-export-title">EXPORT GATE</div>
+              <div class="review03-export-subtitle">Human decision</div>
+            </div>
+            <div class="review03-mini-path">
+              <span>01</span><i></i><span>02</span><i></i><span>03</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+    window.__timelines = window.__timelines || {};
+
+    const stage = document.getElementById("review03-stage");
+    const root = stage.closest('[data-composition-id="03-review-before-export"]');
+    const world = root.querySelector(".review03-world");
+    const normalize = root.querySelector(".review03-normalize-enter");
+    const evidence = document.getElementById("review03-evidence");
+    const validateTitle = document.getElementById("review03-validate-title");
+    const validateCard = document.getElementById("review03-validate-card");
+    const reviewTitle = document.getElementById("review03-review-title");
+    const burstItems = root.querySelectorAll(".review03-burst-item");
+    const exportLock = document.getElementById("review03-lock");
+    const camera = { x: 0, y: 0, scale: 1 };
+
+    function applyCamera() {
+      world.style.transform = `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`;
+    }
+
+    applyCamera();
+
+    const tl = gsap.timeline({ paused: true });
+    gsap.set([normalize, validateTitle, validateCard, reviewTitle, exportLock], { autoAlpha: 0 });
+    gsap.set(burstItems, { autoAlpha: 0 });
+
+
+    tl.fromTo(
+      evidence,
+      { opacity: 0.58, scale: 0.985 },
+      { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
+      0,
+    );
+    tl.fromTo(
+      normalize,
+      { autoAlpha: 0, y: 30 },
+      { autoAlpha: 1, y: 0, duration: 0.72, ease: "power3.out" },
+      0.35,
+    );
+
+    tl.to(
+      camera,
+      {
+        x: -880,
+        y: -12,
+        duration: 2.15,
+        ease: "power2.inOut",
+        onUpdate: applyCamera,
+      },
+      4,
+    );
+    tl.fromTo(
+      validateTitle,
+      { autoAlpha: 0, y: 28 },
+      { autoAlpha: 1, y: 0, duration: 0.62, ease: "power3.out" },
+      5.55,
+    );
+    tl.fromTo(
+      validateCard,
+      { autoAlpha: 0, y: 34, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.78, ease: "power3.out" },
+      6.35,
+    );
+
+    tl.to(
+      camera,
+      {
+        x: -2780,
+        y: -6,
+        duration: 2.1,
+        ease: "power2.inOut",
+        onUpdate: applyCamera,
+      },
+      9.5,
+    );
+    tl.fromTo(
+      reviewTitle,
+      { autoAlpha: 0, y: 30 },
+      { autoAlpha: 1, y: 0, duration: 0.62, ease: "power3.out" },
+      10.95,
+    );
+    burstItems.forEach((item, index) => {
+      tl.fromTo(
+        item,
+        { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0.6, autoAlpha: 0 },
+        {
+          x: Number(item.dataset.targetX),
+          y: Number(item.dataset.targetY),
+          scale: 1,
+          autoAlpha: 1,
+          duration: 1.25,
+          ease: "power3.out",
+        },
+        11.45 + index * 0.07,
+      );
+    });
+    tl.fromTo(
+      exportLock,
+      { autoAlpha: 0, y: 18, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.65, ease: "power3.out" },
+      14,
+    );
+
+    window.__timelines["03-review-before-export"] = tl;
+    })();
+  </script>
+</template>

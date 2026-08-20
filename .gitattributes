@@ -1,0 +1,5 @@
+# Binary assets should not be treated as whitespace-sensitive text by Git.
+*.pdf binary
+*.pptx binary
+*.png binary
+*.jpg binary

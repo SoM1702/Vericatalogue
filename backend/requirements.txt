@@ -1,0 +1,7 @@
+fastapi==0.141.1
+uvicorn==0.52.3
+pydantic==2.13.4
+python-multipart==0.0.32
+PyMuPDF==1.28.2
+Pint==0.25.3
+pytest==9.1.1
