@@ -6,6 +6,19 @@ VeriCatalog Proof is a local hackathon MVP for industrial valves and fittings. I
 
 It is deliberately not a generic chat, RAG, product-copy generator, or production PIM integration. Its job is to make catalog attributes auditable before export.
 
+It is prepared for the [UniHack 2026 industrial-commerce challenge](https://hack2skill.com/event/unilog2026) as a local-first trust layer between inconsistent supplier data and a structured product catalog.
+
+```mermaid
+flowchart LR
+    A[PDF / CSV / XLSX / manual input] --> B[Local parser]
+    B --> C[Evidence-backed candidates]
+    C --> D[Normalization + validation]
+    D --> E[Evidence & Review Workbench]
+    D --> F[Catalog Health]
+    E --> G[Human-approved JSON / CSV export]
+    E --> H[Bounded Evidence Review Agent]
+```
+
 ## What the MVP demonstrates
 
 - Three focused screens: **Enrich Product**, **Evidence & Review Workbench**, and **Catalog Health**
@@ -18,33 +31,50 @@ It is deliberately not a generic chat, RAG, product-copy generator, or productio
 - Approve, reject, and edit review actions persisted in local SQLite
 - A bounded local **Evidence Review Agent** that inspects exceptions, provenance, and validation output; ranks human review tasks; and records its tool trace without changing any product value
 - PIM-ready JSON/CSV product export and review-queue export
-- A generated synthetic text PDF, deliberate conflicting CSV, and 60-row batch—all clearly labelled as synthetic
+- A generated synthetic text PDF, deliberate conflicting CSV, and 60-row batch, all clearly labelled as synthetic
+
+## Complete feature inventory
+
+| Area | Implemented behaviour |
+| --- | --- |
+| File and manual intake | Accepts PDFs, CSVs, simple XLSX workbooks, and manual partial title/MPN input; returns useful input errors rather than fabricating a record. |
+| PDF resilience | Reads embedded text with PyMuPDF; recognises explicit label/value pairs, table-like layouts, wrapped compact specification grids, and document identity cues; uses local Tesseract OCR for low-text scanned pages when installed. |
+| PDF safety | A broad manual or product-family sheet may create an `Inferred` partial record, but unbound SKU data is never upgraded to `Verified` or invented. |
+| SKU separation | Repeated labelled cards and explicit catalog-table rows become separate candidate records. The reviewer explicitly selects a record, so values from neighbouring SKUs cannot be silently merged. |
+| Product schema | Handles manufacturer, manufacturer part number, title, product type, material, size, end connection, pressure rating, temperature range, certifications, and description. |
+| Provenance | Every candidate retains its source file, page or row, source snippet, extraction method, raw value, normalized value, explanation, validation results, status, and review state. |
+| Normalization | Converts metric/imperial size where safe, normalizes material aliases such as `SS304`/`AISI 304`, WOG/WSP pressure notation, end-connection labels, and temperature ranges. Family size ranges are preserved instead of being reduced to one SKU size. |
+| Validation | Enforces required fields, type/unit parsing, valve plausibility, cross-source conflict detection, and duplicate-candidate detection. Competing evidence remains visible. |
+| Human review | Per-field approve, reject, and edit actions persist in local SQLite with review notes and audit events; original evidence is never overwritten. |
+| Batch intelligence | Computes product count, required-field completeness, fields requiring review, conflicts, missing mandatory fields, duplicate candidates, and prioritized review rows for CSV/XLSX batches. |
+| Exports | Delivers PIM-ready product JSON, product CSV, and prioritized review-queue CSV exports. |
+| Optional AI mapping | Uses an OpenAI-compatible backend-only candidate mapper only when configured. Returned values and quotes are independently grounded in the source, AI-only fields stay `Inferred`, and provider failures fall back to deterministic extraction. |
+| Local-first privacy | SQLite, uploads, OCR, deterministic extraction, review history, and review-agent plans remain local. No cloud account, API key, or remote database is necessary for the default workflow. |
+| Submission material | Includes Docker Compose setup, editable pitch deck, a rendered 90-second 1080p demo MP4, editable video source, visual QA snapshots, and synthetic demo files. |
 
 ## Local setup
 
-Prerequisites: Node.js 20+ and Python 3.11+ (the provided `backend/venv` already contains the needed local packages in this workspace).
-
-Terminal 1 — backend:
+Prerequisites: Node.js 20+ and Python 3.11+. Tesseract is optional but enables OCR for low-text scanned PDF pages.
 
 ```bash
-cd /Users/nan/Documents/codes/unihack/backend
-source venv/bin/activate
-uvicorn app.main:app --reload --port 8000
+git clone https://github.com/SoM1702/Vericatalogue.git
+cd Vericatalogue
 ```
 
-If starting from a fresh environment instead of the supplied virtual environment:
+Terminal 1: backend
 
 ```bash
+cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-Terminal 2 — frontend:
+Terminal 2: frontend
 
 ```bash
-cd /Users/nan/Documents/codes/unihack/frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -64,7 +94,7 @@ Then run the backend with `--port 8010` and restart the Vite development server.
 The deterministic extractor is the default demo mode. To add your own OpenAI-compatible AI provider without exposing its key to the browser:
 
 ```bash
-cd /Users/nan/Documents/codes/unihack
+cd /path/to/Vericatalogue
 cp backend/.env.example backend/.env
 ```
 
@@ -86,7 +116,7 @@ Before a demo with a real provider, call `GET /api/ai/status`. It must report `c
 With Docker Desktop running, the complete local app is available without separately starting Python or Vite:
 
 ```bash
-cd /Users/nan/Documents/codes/unihack
+cd /path/to/Vericatalogue
 docker compose up --build
 ```
 
@@ -100,11 +130,31 @@ docker compose --env-file backend/.env up --build
 
 No key is baked into an image or sent to the browser.
 
+## API surface
+
+FastAPI exposes interactive request/response documentation at `/docs` while the backend is running.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Local service status. |
+| `GET` | `/api/ai/status` | AI configuration state only; never returns a key or provider URL. |
+| `GET` | `/api/demo-files/{filename}` | Download a synthetic PDF or CSV demo input. |
+| `POST` | `/api/enrich` | Enrich uploaded PDF/CSV/XLSX data or manual partial input; supports safe PDF `record_index` selection. |
+| `POST` | `/api/batch` | Process a CSV/XLSX batch and return catalog-health metrics. |
+| `GET` | `/api/products/{product_id}` | Retrieve a stored product record. |
+| `PATCH` | `/api/products/{product_id}/attributes/{field}` | Approve, reject, or edit one field. |
+| `POST` | `/api/products/{product_id}/review-agent/plan` | Run the bounded review agent. |
+| `GET` | `/api/products/{product_id}/review-agent/latest` | Retrieve the latest persisted review-agent plan. |
+| `GET` | `/api/products/{product_id}/export?format=json` or `format=csv` | Export a PIM-ready product record. |
+| `GET` | `/api/review-queue/export` | Export the prioritized review queue. |
+
 ## Bounded Evidence Review Agent
 
 After opening a record in **Evidence & Review Workbench**, choose **Run review agent**. It runs four named, local inspection tools in a fixed bounded sequence: identify exception fields, inspect retained provenance, evaluate validation output, and rank human actions. The resulting plan and tool trace are stored in SQLite so the reviewer can see why each task was prioritised.
 
 This is intentionally an evidence-first agentic workflow, not an autonomous decision maker: it has no browser, shell, export, database-write, approval, or field-edit tools. It cannot invent facts, resolve a conflict, approve a field, or call an external model. It improves the review queue and demo story; it does **not** raise or claim extraction accuracy.
+
+The persisted task plan is deliberately reproducible. Its four inspect-only tools are `identify_exceptions`, `inspect_provenance`, `evaluate_validation`, and `rank_human_actions`. Each task identifies an exception field, priority, evidence count, recommended human action, and reason.
 
 ## PDF intake boundaries
 
@@ -131,10 +181,10 @@ The displayed confidence is a fixed, documented **review heuristic**, not an acc
 ## Test and build
 
 ```bash
-cd /Users/nan/Documents/codes/unihack/backend
+cd backend
 venv/bin/python -m pytest -q
 
-cd /Users/nan/Documents/codes/unihack/frontend
+cd ../frontend
 npm run build
 npm run lint
 ```
@@ -144,12 +194,25 @@ npm run lint
 The repository does not ship supplier data or an unmeasured “accuracy” number. It includes a local, reproducible evaluator that reads only an authorised, human-labelled ground-truth CSV and leaves its source files in place:
 
 ```bash
-cd /Users/nan/Documents/codes/unihack/backend
+cd backend
 venv/bin/python -m evaluation.run_evaluation /absolute/path/to/ground_truth.csv \
   --output /absolute/path/to/vericatalog-evaluation-output
 ```
 
 See [backend/evaluation/README.md](backend/evaluation/README.md) for the required labels and responsible reporting boundary. Do not call any result “overall accuracy”; report the exact source set, inclusion rules, annotators, and field-level measures together. A deliberately limited public-datasheet smoke run and its reporting limits are recorded in [docs/13-public-document-smoke-evaluation.md](docs/13-public-document-smoke-evaluation.md).
+
+The evaluator reports document acceptance, selected-record coverage, direct `Verified` precision/recall, `Inferred` candidate agreement, false-`Verified` rate, missing/conflict routing, and auditable per-field results. It never copies the evaluated source documents into this repository.
+
+The documented public-datasheet smoke run matched 8/8 expected **Inferred** family-level candidates. That one-document result is not independently labelled and must not be represented as broad real-world accuracy.
+
+## Scope and limitations
+
+- Focused on industrial valves and fittings; it is not a generic document-intelligence product.
+- Supports embedded-text/table-like PDFs, simple spreadsheets, manual partial input, and local OCR when Tesseract is available.
+- It does not promise complete extraction from arbitrary manuals, drawings, image-only scans with poor OCR, or documents without product boundaries.
+- The Evidence Review Agent helps a human prioritize work; it is intentionally not an autonomous decision maker.
+- No production PIM/ERP connector, cloud deployment, or automatic external publishing is included in this MVP.
+- All bundled catalog inputs are synthetic. Obtain authorization before evaluating private or licensed supplier data.
 
 ## Repository layout
 
@@ -162,6 +225,7 @@ frontend/src/       React TypeScript three-screen interface
 docs/               Product, architecture, demo, evaluation, and deck materials
 submission/         Final PPTX, its local screenshot assets, and submission handoff notes
 videos/             Validated silent demo-video source, project assets, and visual QA snapshots
+docker-compose.yml  One-command local full-stack setup
 ```
 
 ## Data provenance
@@ -170,4 +234,4 @@ All included product sources are intentionally fabricated synthetic demo data. T
 
 ## Documentation
 
-The Stage 1 plan and handoff material live in `docs/`, including requirements, compliance, scope, user flows, schema and validation, architecture, evaluation, demo script, pitch-deck outline, a ready-to-paste [submission description](docs/SUBMISSION_DESCRIPTION.md), implementation plan, data sources, and final submission checklist. The rendered editable deck and final owner steps are in [submission/README.md](submission/README.md).
+The Stage 1 plan and handoff material live in `docs/`, including requirements, compliance, scope, user flows, schema and validation, architecture, evaluation, demo script, pitch-deck outline, a ready-to-paste [submission description](docs/SUBMISSION_DESCRIPTION.md), implementation plan, data sources, AI-provider preflight, real-PDF evaluation boundaries, and final submission checklist. The rendered editable deck, final MP4, and owner steps are in [submission/README.md](submission/README.md).
