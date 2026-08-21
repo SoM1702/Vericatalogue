@@ -26,6 +26,7 @@ def _load_local_env(path: Path) -> None:
 
 _load_local_env(BACKEND_ROOT / ".env")
 
+DATABASE_URL = os.getenv("VERICATALOG_DATABASE_URL", "")
 DB_PATH = Path(os.getenv("VERICATALOG_DB_PATH", DATA_DIR / "vericatalog.sqlite3"))
 UPLOAD_DIR = Path(os.getenv("VERICATALOG_UPLOAD_DIR", DATA_DIR / "uploads"))
 MAX_UPLOAD_BYTES = int(os.getenv("VERICATALOG_MAX_UPLOAD_BYTES", "5242880"))

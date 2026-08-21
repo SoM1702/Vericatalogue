@@ -11,6 +11,7 @@ backend/.pytest_cache/
 backend/**/__pycache__/
 
 # Dependency and generated build output
+backend/venv/
 frontend/node_modules/
 frontend/dist/
 frontend/.env.local

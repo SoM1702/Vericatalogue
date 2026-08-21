@@ -9,3 +9,4 @@ langchain
 langgraph
 langchain-openai
 openpyxl
+psycopg[binary]>=3.1.18
