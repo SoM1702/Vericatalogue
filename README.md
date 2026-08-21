@@ -6,7 +6,6 @@ VeriCatalog Proof is a local hackathon MVP for industrial valves and fittings. I
 
 It is deliberately not a generic chat, RAG, product-copy generator, or production PIM integration. Its job is to make catalog attributes auditable before export.
 
-It is prepared for the [UniHack 2026 industrial-commerce challenge](https://hack2skill.com/event/unilog2026) as a local-first trust layer between inconsistent supplier data and a structured product catalog.
 
 ```mermaid
 flowchart LR
