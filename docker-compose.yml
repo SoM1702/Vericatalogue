@@ -24,7 +24,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: /api
+        VITE_API_BASE_URL: ""
     ports:
       - "${VERICATALOG_PORT:-5173}:80"
     depends_on:

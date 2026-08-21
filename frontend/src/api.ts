@@ -1,6 +1,9 @@
 import type { BatchResult, EnrichmentResult, ProductRecord, ReviewAgentPlan } from './types'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+// Development requests use Vite's same-origin `/api` proxy by default. This
+// avoids a fragile CORS dependency when Vite chooses a fallback local port.
+// A deployment may still provide a full API origin through VITE_API_BASE_URL.
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
 
 async function getError(response: Response): Promise<string> {
   try {

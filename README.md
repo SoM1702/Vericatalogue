@@ -54,10 +54,10 @@ Open `http://localhost:5173`.
 If port 8000 is in use, pick another local API port and create `frontend/.env.local`:
 
 ```bash
-VITE_API_BASE_URL=http://127.0.0.1:8010
+VITE_API_PROXY_TARGET=http://127.0.0.1:8010
 ```
 
-Then run the backend with `--port 8010`. `.env.example` lists the local-only server defaults. No API key, model credential, database server, or cloud account is required.
+Then run the backend with `--port 8010` and restart the Vite development server. The development server proxies `/api` requests to the local backend, so it continues to work even if Vite needs to use port 5174 or another fallback port. `.env.example` lists the local-only server defaults. No API key, model credential, database server, or cloud account is required.
 
 ## Optional AI candidate mapping
 
