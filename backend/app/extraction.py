@@ -9,9 +9,8 @@ import tempfile
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from xml.etree import ElementTree as ET
-
 import pymupdf
+import openpyxl
 
 from .config import MAX_UPLOAD_BYTES, UPLOAD_DIR
 from .models import Evidence
@@ -598,63 +597,88 @@ def parse_csv(filename: str, payload: bytes) -> list[SourceRow]:
     return rows
 
 
-def _xlsx_cell_text(cell: ET.Element, shared_strings: list[str], namespace: str) -> str:
-    cell_type = cell.attrib.get("t")
-    value = cell.find(f"{namespace}v")
-    if value is None or value.text is None:
-        inline = cell.find(f"{namespace}is/{namespace}t")
-        return inline.text if inline is not None and inline.text else ""
-    if cell_type == "s":
-        try:
-            return shared_strings[int(value.text)]
-        except (IndexError, ValueError):
-            return ""
-    return value.text
-
-
-def _xlsx_column_index(reference: str) -> int:
-    """Convert XLSX cell references such as B3 to a zero-based column index."""
-    letters = re.match(r"[A-Z]+", reference)
-    if not letters:
-        return 0
-    index = 0
-    for letter in letters.group(0):
-        index = index * 26 + (ord(letter) - ord("A") + 1)
-    return index - 1
-
-
 def parse_xlsx(filename: str, payload: bytes) -> list[SourceRow]:
-    """Read a simple first-sheet XLSX without requiring an extra Excel engine."""
+    """Read a simple first-sheet XLSX using openpyxl, falling back to custom XML parsing if needed."""
     try:
-        archive = zipfile.ZipFile(io.BytesIO(payload))
-        shared_strings: list[str] = []
-        namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
-        if "xl/sharedStrings.xml" in archive.namelist():
-            root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
-            shared_strings = ["".join(node.itertext()) for node in root.findall(f"{namespace}si")]
-        sheet_name = "xl/worksheets/sheet1.xml"
-        if sheet_name not in archive.namelist():
-            raise SourceReadError(f"{filename} has no readable first worksheet.")
-        root = ET.fromstring(archive.read(sheet_name))
-    except (zipfile.BadZipFile, ET.ParseError) as exc:
-        raise SourceReadError(f"Could not read {filename} as a simple XLSX workbook.") from exc
-    sparse_rows: list[dict[int, str]] = []
-    width = 0
-    for sheet_row in root.findall(f".//{namespace}sheetData/{namespace}row"):
-        values: dict[int, str] = {}
-        for fallback_index, cell in enumerate(sheet_row.findall(f"{namespace}c")):
-            column_index = _xlsx_column_index(cell.attrib.get("r", "")) if cell.attrib.get("r") else fallback_index
-            values[column_index] = _xlsx_cell_text(cell, shared_strings, namespace)
-            width = max(width, column_index + 1)
-        sparse_rows.append(values)
-    matrix = [[row.get(index, "") for index in range(width)] for row in sparse_rows]
-    if len(matrix) < 2:
-        raise SourceReadError(f"{filename} needs a header row and at least one product row.")
-    headers = matrix[0]
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerows(matrix)
-    return parse_csv(filename, output.getvalue().encode("utf-8"))
+        workbook = openpyxl.load_workbook(io.BytesIO(payload), data_only=True)
+        sheet = workbook.active
+        if sheet is None:
+            raise SourceReadError(f"{filename} has no readable worksheets.")
+        
+        matrix: list[list[str]] = []
+        for row in sheet.iter_rows(values_only=True):
+            row_values = [str(val).strip() if val is not None else "" for val in row]
+            if any(row_values):
+                matrix.append(row_values)
+
+        if len(matrix) < 2:
+            raise SourceReadError(f"{filename} needs a header row and at least one product row.")
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerows(matrix)
+        return parse_csv(filename, output.getvalue().encode("utf-8"))
+    except Exception:
+        # Fallback to deterministic ZIP / XML parsing for minimal XLSX streams (e.g. in tests)
+        try:
+            archive = zipfile.ZipFile(io.BytesIO(payload))
+            shared_strings: list[str] = []
+            namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+            if "xl/sharedStrings.xml" in archive.namelist():
+                import xml.etree.ElementTree as ET
+                root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
+                shared_strings = ["".join(node.itertext()) for node in root.findall(f"{namespace}si")]
+            sheet_name = "xl/worksheets/sheet1.xml"
+            if sheet_name not in archive.namelist():
+                raise SourceReadError(f"{filename} has no readable first worksheet.")
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(archive.read(sheet_name))
+            
+            sparse_rows: list[dict[int, str]] = []
+            width = 0
+            
+            def xlsx_cell_text(cell, shared_strings, namespace):
+                cell_type = cell.attrib.get("t")
+                val_elem = cell.find(f"{namespace}v")
+                if val_elem is None or val_elem.text is None:
+                    inline = cell.find(f"{namespace}is/{namespace}t")
+                    return inline.text if inline is not None and inline.text else ""
+                if cell_type == "s":
+                    try:
+                        return shared_strings[int(val_elem.text)]
+                    except (IndexError, ValueError):
+                        return ""
+                return val_elem.text
+
+            def xlsx_col_idx(ref):
+                letters = re.match(r"[A-Z]+", ref)
+                if not letters:
+                    return 0
+                idx = 0
+                for letter in letters.group(0):
+                    idx = idx * 26 + (ord(letter) - ord("A") + 1)
+                return idx - 1
+
+            for sheet_row in root.findall(f".//{namespace}sheetData/{namespace}row"):
+                values: dict[int, str] = {}
+                for fallback_index, cell in enumerate(sheet_row.findall(f"{namespace}c")):
+                    column_index = xlsx_col_idx(cell.attrib.get("r", "")) if cell.attrib.get("r") else fallback_index
+                    values[column_index] = xlsx_cell_text(cell, shared_strings, namespace)
+                    width = max(width, column_index + 1)
+                sparse_rows.append(values)
+                
+            matrix = [[row.get(index, "") for index in range(width)] for row in sparse_rows]
+            if len(matrix) < 2:
+                raise SourceReadError(f"{filename} needs a header row and at least one product row.")
+            
+            output = io.StringIO()
+            writer = csv.writer(output)
+            writer.writerows(matrix)
+            return parse_csv(filename, output.getvalue().encode("utf-8"))
+        except Exception as fallback_exc:
+            raise SourceReadError(f"Could not read {filename} as a simple XLSX workbook.") from fallback_exc
+
+
 
 
 def parse_source_payload(filename: str, payload: bytes) -> list[SourceRow]:

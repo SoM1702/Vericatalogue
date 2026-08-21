@@ -2,7 +2,9 @@
 .tmp-deck/
 
 # Local application state and credentials
-backend/.env
+**/.env
+**/.env.local
+**/.env.*.local
 backend/data/*.sqlite3
 backend/data/uploads/
 backend/.pytest_cache/

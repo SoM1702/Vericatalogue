@@ -36,11 +36,18 @@ def test_review_agent_prioritizes_conflict_and_keeps_product_unchanged(tmp_path:
     assert plan is not None
     assert plan.mutations_made is False
     assert plan.human_approval_required is True
+    # The multi-agent orchestrator loops once when conflict is detected, then runs decision and policy engine
     assert [trace.tool for trace in plan.tool_trace] == [
-        "identify_exceptions",
-        "inspect_provenance",
-        "evaluate_validation",
-        "rank_human_actions",
+        "evidence_extraction",
+        "normalization_check",
+        "validation_check",
+        "conflict_resolution",
+        "evidence_extraction",
+        "normalization_check",
+        "validation_check",
+        "conflict_resolution",
+        "decision_agent",
+        "policy_engine",
     ]
     assert plan.tasks[0].field == "pressure_rating"
     assert plan.tasks[0].recommended_action == "resolve_conflict"

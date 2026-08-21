@@ -34,6 +34,8 @@ export interface ProductAttribute {
   review_status: ReviewStatus
   review_note: string | null
   reviewed_value: string | null
+  agent_decision: string | null
+  agent_reason: string | null
 }
 
 export interface ProductRecord {
@@ -60,7 +62,17 @@ export interface EnrichmentResult {
 }
 
 export interface ReviewAgentToolTrace {
-  tool: 'identify_exceptions' | 'inspect_provenance' | 'evaluate_validation' | 'rank_human_actions'
+  tool:
+    | 'identify_exceptions'
+    | 'inspect_provenance'
+    | 'evaluate_validation'
+    | 'rank_human_actions'
+    | 'evidence_extraction'
+    | 'normalization_check'
+    | 'validation_check'
+    | 'conflict_resolution'
+    | 'decision_agent'
+    | 'policy_engine'
   outcome: string
   item_count: number
 }
@@ -115,3 +127,17 @@ export interface BatchResult {
   metrics: BatchMetrics
   message: string
 }
+
+export interface AgentDecision {
+  product_id: string
+  attribute_field: string
+  agent_name: string
+  agent_action: string
+  input_context: string | null
+  output: string | null
+  evidence_ids: string[]
+  reason: string | null
+  confidence: number
+  created_at: string
+}
+

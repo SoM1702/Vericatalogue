@@ -216,6 +216,33 @@ function WorkbenchScreen({ product, selectedField, onSelectField, onProduct, onN
       {selected && <article className="detail-panel"><div className="detail-topline"><div><p className="eyebrow">ATTRIBUTE REVIEW</p><h2>{FIELD_LABELS[selected.field]}</h2></div><StatusPill status={selected.status} /></div>
         <div className="value-compare"><div><span>EXTRACTED RAW VALUE</span><strong>{selected.raw_value || 'No direct source value'}</strong></div><div className="compare-arrow">→</div><div className="canonical-value"><span>PIM CANONICAL VALUE</span><strong>{valueOf(selected)}</strong>{selected.normalization_explanation && <small>{selected.normalization_explanation}</small>}</div></div>
         <div className="review-signals"><div><span>Confidence</span><strong>{Math.round(selected.confidence * 100)}<small>/100</small></strong><p>Review heuristic</p></div><div><span>Validation</span><strong>{selected.validation_results.every((result) => result.status === 'pass') ? 'Pass' : 'Review'}</strong><p>{selected.validation_results.filter((result) => result.status !== 'pass').length || 'All'} flagged rules</p></div><div><span>Review state</span><strong className={`review-state-${selected.review_status}`}>{selected.review_status}</strong><p>{selected.review_note || 'No reviewer note yet'}</p></div></div>
+        {selected.agent_decision && (
+          <section className="agent-analysis-section" style={{
+            margin: '1rem 0',
+            padding: '1rem',
+            borderRadius: '6px',
+            border: '1px solid var(--border-color)',
+            backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          }}>
+            <p className="eyebrow" style={{ margin: 0, fontSize: '0.75rem', letterSpacing: '0.05em' }}>AGENT ANALYSIS &amp; AUDIT</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+              <h4 style={{ margin: 0, fontSize: '0.95rem' }}>Final Recommendation</h4>
+              <span className={`decision-badge decision-${selected.agent_decision}`} style={{
+                padding: '0.2rem 0.5rem',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                fontSize: '0.8rem',
+                backgroundColor: selected.agent_decision === 'AUTO_VERIFY' ? '#4caf50' : '#ff9800',
+                color: '#fff',
+              }}>{selected.agent_decision.replaceAll('_', ' ')}</span>
+            </div>
+            {selected.agent_reason && (
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--muted-color)', fontStyle: 'italic' }}>
+                “{selected.agent_reason}”
+              </p>
+            )}
+          </section>
+        )}
         <section className="evidence-section"><div className="section-title"><div><p className="eyebrow">RETAINED EVIDENCE</p><h3>{selected.evidence.length} source reference{selected.evidence.length === 1 ? '' : 's'}</h3></div><span className="proof-lock">◈ Evidence-first</span></div>{selected.evidence.length ? selected.evidence.map((evidence, index) => <div className="evidence-card" key={`${evidence.source_file}-${index}`}><div className="evidence-meta"><span className="source-file">▣ {evidence.source_file}</span><span>{evidence.page ? `Page ${evidence.page}` : evidence.row ? `Row ${evidence.row}` : 'Manual input'}</span><span>{evidence.method.replaceAll('_', ' ')}</span></div><blockquote>“{evidence.snippet}”</blockquote></div>) : <div className="no-evidence">No direct source evidence. The field cannot be marked Verified.</div>}</section>
         <section className="validation-section"><p className="eyebrow">DETERMINISTIC VALIDATION</p>{selected.validation_results.map((result) => <div className={`validation-row validation-${result.status}`} key={result.rule}><span>{result.status === 'pass' ? '✓' : result.status === 'warning' ? '!' : '×'}</span><div><strong>{result.rule.replaceAll('_', ' ')}</strong><p>{result.message}</p></div><b>{result.status}</b></div>)}</section>
         <section className="review-section"><div><p className="eyebrow">HUMAN DECISION</p><h3>Record your review</h3><p className="review-helper">Approving or editing does not remove a conflict or change the original source evidence.</p></div><div className="review-buttons"><button className="button button-secondary approve" disabled={saving} onClick={() => saveReview('approve')}>Approve evidence</button><button className="button button-secondary reject" disabled={saving} onClick={() => saveReview('reject')}>Reject field</button><button className="button button-primary soft" disabled={saving} onClick={() => setEditOpen(!editOpen)}>Edit value</button></div>{editOpen && <div className="edit-form"><label>Reviewed value<input value={editValue} onChange={(event) => setEditValue(event.target.value)} /></label><label>Review note (recommended)<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Why is this reviewed value appropriate?" /></label><button className="button button-primary" disabled={saving || !editValue.trim()} onClick={() => saveReview('edit')}>{saving ? 'Saving…' : 'Save reviewed value'}</button></div>}</section>
@@ -229,8 +256,49 @@ function ReviewAgentPanel({ plan, loading, onRun, onOpenField }: { plan: ReviewA
     find_source_value: 'Find source value',
     verify_candidate: 'Verify candidate',
   }
+  
+  const workflowStages = [
+    { name: 'Evidence Agent', key: 'evidence_extraction' },
+    { name: 'Normalization Agent', key: 'normalization_check' },
+    { name: 'Validation Agent', key: 'validation_check' },
+    { name: 'Conflict Agent', key: 'conflict_resolution' },
+    { name: 'Decision Agent', key: 'decision_agent' },
+    { name: 'Policy Engine', key: 'policy_engine' },
+  ]
+
   return <section className="review-agent-panel" aria-label="Evidence Review Agent">
     <div className="agent-heading"><div><p className="eyebrow">BOUNDED AGENTIC WORKFLOW</p><h2>Evidence Review Agent</h2><p>Runs local inspection tools, ranks the human review queue, and leaves every product value unchanged.</p></div><button className="button button-primary agent-run" onClick={onRun} disabled={loading}>{loading ? 'Running local checks…' : plan ? 'Run again' : 'Run review agent'}</button></div>
+    {plan && (
+      <div className="agent-workflow-stages" style={{
+        display: 'flex',
+        gap: '0.5rem',
+        flexWrap: 'wrap',
+        margin: '0.75rem 0',
+        padding: '0.5rem',
+        borderRadius: '6px',
+        backgroundColor: 'rgba(0,0,0,0.02)',
+        border: '1px solid var(--border-color)'
+      }}>
+        {workflowStages.map((stage) => {
+          const executed = plan.tool_trace.some((t) => t.tool === stage.key)
+          return (
+            <span key={stage.key} className={`workflow-stage-pill ${executed ? 'active' : ''}`} style={{
+              padding: '0.2rem 0.6rem',
+              borderRadius: '1rem',
+              fontSize: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.2rem',
+              border: '1px solid var(--border-color)',
+              backgroundColor: executed ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
+              color: executed ? '#4caf50' : 'var(--muted-color)',
+            }}>
+              {executed ? '✓' : '○'} {stage.name}
+            </span>
+          )
+        })}
+      </div>
+    )}
     {plan ? <div className="agent-result"><div className="agent-summary"><span className="agent-seal">◈</span><p><strong>{plan.summary}</strong><small>{plan.guardrail}</small></p><span className="agent-mode">{plan.tool_trace.length} local tools · human approval required</span></div>{plan.tasks.length ? <div className="agent-task-list">{plan.tasks.map((task) => <button key={task.field} className="agent-task" onClick={() => onOpenField(task.field)}><div><span className="agent-task-priority">{task.priority}</span><strong>{FIELD_LABELS[task.field]}</strong><StatusPill status={task.status} /></div><p>{task.reason}</p><small>{actionCopy[task.recommended_action]} · {task.evidence_count} evidence reference{task.evidence_count === 1 ? '' : 's'} →</small></button>)}</div> : <div className="agent-clear">No exceptions were found. The agent made no changes and left verified evidence available for spot review.</div>}<details className="agent-trace"><summary>{plan.tool_trace.length} tool calls recorded in the local audit trail</summary><ol>{plan.tool_trace.map((trace) => <li key={trace.tool}><strong>{trace.tool.replaceAll('_', ' ')}</strong><span>{trace.outcome}</span></li>)}</ol></details></div> : <div className="agent-empty"><span>01</span><p>Run the agent after enrichment. It will inspect exceptions, provenance, and validation results before suggesting the next human action.</p><span>02</span><p>It cannot approve, edit, export, or create product facts.</p></div>}
   </section>
 }

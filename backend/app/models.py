@@ -44,6 +44,8 @@ class ProductAttribute(BaseModel):
     review_status: ReviewStatus = "pending"
     review_note: str | None = None
     reviewed_value: str | None = None
+    agent_decision: str | None = None
+    agent_reason: str | None = None
 
 
 class ProductRecord(BaseModel):
@@ -86,7 +88,18 @@ class BatchResponse(BaseModel):
 class ReviewAgentToolTrace(BaseModel):
     """A local tool call made by the bounded Evidence Review Agent."""
 
-    tool: Literal["identify_exceptions", "inspect_provenance", "evaluate_validation", "rank_human_actions"]
+    tool: Literal[
+        "identify_exceptions",
+        "inspect_provenance",
+        "evaluate_validation",
+        "rank_human_actions",
+        "evidence_extraction",
+        "normalization_check",
+        "validation_check",
+        "conflict_resolution",
+        "decision_agent",
+        "policy_engine",
+    ]
     outcome: str
     item_count: int = Field(ge=0)
 
@@ -114,3 +127,17 @@ class ReviewAgentPlan(BaseModel):
     mutations_made: bool = False
     human_approval_required: bool = True
     guardrail: str = "The agent only inspects retained evidence and validation output. It cannot change values, resolve conflicts, approve fields, or export data."
+
+
+class AgentDecision(BaseModel):
+    product_id: str
+    attribute_field: str
+    agent_name: str
+    agent_action: str
+    input_context: str | None = None
+    output: str | None = None
+    evidence_ids: list[str] = Field(default_factory=list)
+    reason: str | None = None
+    confidence: float = 1.0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+

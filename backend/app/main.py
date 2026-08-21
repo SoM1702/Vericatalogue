@@ -8,7 +8,8 @@ from .config import CORS_ORIGINS, DB_PATH, DEMO_DIR, ensure_runtime_directories
 from .ai_mapping import AIMapperError, ai_status, enrich_with_ai_candidates
 from .demo_assets import BATCH_NAME, CONFLICT_NAME, MULTI_SKU_PDF_NAME, PDF_NAME, ensure_demo_assets
 from .extraction import SourceReadError, manual_source, parse_source
-from .models import BatchResponse, EnrichmentResponse, ProductRecord, RecordOption, ReviewAgentPlan, ReviewRequest
+from .models import AgentDecision, BatchResponse, EnrichmentResponse, ProductRecord, RecordOption, ReviewAgentPlan, ReviewRequest
+
 from .repository import ProductRepository
 from .service import CatalogService
 
@@ -218,3 +219,47 @@ def export_review_queue() -> Response:
         media_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="vericatalog-review-queue.csv"'},
     )
+
+
+@app.get("/api/agent/decisions/{product_id}", response_model=list[AgentDecision])
+def get_agent_decisions(product_id: str) -> list[AgentDecision]:
+    product = service.repository.get(product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product record not found.")
+    return service.repository.get_agent_decisions(product_id)
+
+
+@app.get("/api/agent/audit/{product_id}", response_model=list[AgentDecision])
+def get_agent_audit(product_id: str) -> list[AgentDecision]:
+    return get_agent_decisions(product_id)
+
+
+@app.post("/api/agent/run/{product_id}", response_model=ReviewAgentPlan)
+def trigger_agent_run(product_id: str) -> ReviewAgentPlan:
+    plan = service.run_review_agent(product_id)
+    if not plan:
+        raise HTTPException(status_code=404, detail="Product record not found.")
+    return plan
+
+
+@app.get("/api/agent/status/{product_id}")
+def get_agent_status(product_id: str) -> dict:
+    product = service.repository.get(product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product record not found.")
+    plan = service.repository.latest_review_agent_run(product_id)
+    if not plan:
+        return {"status": "idle", "has_run": False}
+    has_auto_verified = any(attr.review_status == "approved" for attr in product.attributes)
+    has_pending = any(
+        attr.review_status == "pending" and attr.agent_decision in {"HUMAN_REVIEW", "CONFLICT", "MISSING"}
+        for attr in product.attributes
+    )
+    status_label = "escalated" if has_pending else "verified" if has_auto_verified else "completed"
+    return {
+        "status": status_label,
+        "has_run": True,
+        "plan_id": plan.id,
+        "summary": plan.summary,
+    }
+

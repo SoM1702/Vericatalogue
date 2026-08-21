@@ -128,10 +128,18 @@ class CatalogService:
 
     def enrich(self, source_rows: list[SourceRow]) -> ProductRecord:
         product = self.build_product(source_rows)
-        return self.repository.save(product)
+        self.repository.save(product)
+        self.run_review_agent(product.id)
+        return self.repository.get(product.id) or product
 
     def batch(self, source_rows: list[SourceRow]) -> list[ProductRecord]:
-        products = [self.repository.save(self.build_product([source_row])) for source_row in source_rows]
+        products = []
+        for source_row in source_rows:
+            product = self.build_product([source_row])
+            self.repository.save(product)
+            self.run_review_agent(product.id)
+            refetched = self.repository.get(product.id)
+            products.append(refetched or product)
         return products
 
     def review(self, product_id: str, field: str, request: ReviewRequest) -> ProductRecord | None:
@@ -155,8 +163,37 @@ class CatalogService:
         product = self.repository.get(product_id)
         if not product:
             return None
-        plan = EvidenceReviewAgent().run(product)
+            
+        # Collect past human review corrections (Feedback/Learning loop)
+        historical_corrections = []
+        try:
+            for p in self.repository.list():
+                for attr in p.attributes:
+                    if attr.review_status == "edited" and attr.reviewed_value:
+                        historical_corrections.append({
+                            "field": attr.field,
+                            "raw_value": attr.raw_value,
+                            "reviewed_value": attr.reviewed_value
+                        })
+                    elif attr.review_status == "approved" and attr.normalized_value:
+                        historical_corrections.append({
+                            "field": attr.field,
+                            "raw_value": attr.raw_value,
+                            "reviewed_value": attr.normalized_value.display
+                        })
+        except Exception:
+            pass
+
+        plan, updated_attributes, decisions = EvidenceReviewAgent().run_with_updates(product, historical_corrections)
+        
+        # Save every agent action decision to the SQLite database
+        for decision in decisions:
+            self.repository.save_agent_decision(decision)
+
+        product.attributes = updated_attributes
+        self.repository.save(product)
         return self.repository.save_review_agent_run(plan)
+
 
     def product_csv(self, product: ProductRecord) -> str:
         values = _attribute_map(product)

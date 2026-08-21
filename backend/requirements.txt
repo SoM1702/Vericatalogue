@@ -5,3 +5,7 @@ python-multipart==0.0.32
 PyMuPDF==1.28.2
 Pint==0.25.3
 pytest==9.1.1
+langchain
+langgraph
+langchain-openai
+openpyxl
